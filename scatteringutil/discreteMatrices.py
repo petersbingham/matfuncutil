@@ -63,7 +63,23 @@ class disMats(dict):
             return newmat 
         else:
             return dict.__getitem__(self, key)
-    
+
+    def calculateReductionIndices(self, startIndex, endIndex, numPoints, 
+                                  fromEnd=False):
+        if endIndex-startIndex+1 < numPoints:
+            raise IndexError
+        
+        step = int((endIndex-startIndex) /(numPoints-1))
+        if fromEnd:
+            actStartIndex = startIndex+(endIndex-startIndex) - (numPoints-1)*step
+            actEndIndex = endIndex
+        else:
+            actStartIndex = startIndex
+            actEndIndex = startIndex+(numPoints-1)*step
+            
+        return (actStartIndex,actEndIndex+1,step),\
+               (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
+
     def __str__(self):
         string = ""
         fstr = '%.'+str(self.sigFigs)+'E'
@@ -93,38 +109,6 @@ class disMats(dict):
         for k,v in self.iteritems():
             newmat[k*fac] = v
         return newmat
-
-    def decimate(self, startIndex, endIndex, numPoints=None, fromEnd=False):
-        step = 1
-        if numPoints is not None:
-            step = int((endIndex-startIndex) / (numPoints-1))
-        incIndex = 0
-        actualStartIndex = startIndex
-        if fromEnd:
-            # The 1s cancel:
-            actualStartIndex = startIndex + (endIndex-startIndex) - (numPoints-1)*step
-        stepCnt = 0
-        startEne = None
-        
-        newmat = disMat(self.units)
-        newmat.setChartParameters(self.chartTitle, self.colourCycle, 
-                                  self.legPrefix, self.useMarker)
-        newmat.setPrintParameters(self.sigFigs)
-        for ene in self.sortedKeys():
-            if incIndex>endIndex:
-                raise("Index outside range")
-            if incIndex>=actualStartIndex:
-                if stepCnt == 0:
-                    if startEne is None:
-                        startEne = ene
-                    newmat[ene] = self[ene]
-                stepCnt += 1
-                if stepCnt == step:
-                    stepCnt = 0
-            if len(newmat) == numPoints:
-                break
-            incIndex += 1
-        return newmat, step, actualStartIndex, incIndex, startEne, ene
     
     def plot(self, m, n, logx=False, logy=False, imag=False):
         self._initPlot()
