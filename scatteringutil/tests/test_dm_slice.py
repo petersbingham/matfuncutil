@@ -5,7 +5,7 @@ sys.path.insert(0,basedir+'/../..')
 
 import pynumwrap as nw
 import dumMats
-from scatteringutil import discreteMatrices as dm
+from scatteringutil import discrete as dis
 
 import unittest
 
@@ -19,6 +19,7 @@ class test_intElementAccess(unittest.TestCase):
             kv = d1[i]
             self.assertEqual(kv[0], sortedKeys[i])
             self.assertEqual(kv[1], sortedVals[i])
+
 
 class sliceTestHelper(unittest.TestCase):
     def calPosNegImagEne(self, i):

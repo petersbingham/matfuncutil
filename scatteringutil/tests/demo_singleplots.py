@@ -5,15 +5,16 @@ sys.path.insert(0,basedir+'/../..')
 
 import dumMats
 
-d = dumMats.rowOffsetColGain_zeroImag()
+a = dumMats.rowOffsetColGain_zeroImag()
+a.plot()
 
-d.plot(0,0)
+b = a.reduce(0)
+b.setChartParameters(chartTitle="Test title")
+b.plot(logx=True, logy=True)
 
-d.setChartParameters(chartTitle="Test title")
-d.plotRow(0)
+c = b.reduce(1)
+c.setChartParameters(legPrefix="Test", xsize=10, ysize=10)
+c.plot(imag=True)
 
-d.setChartParameters(legPrefix="Test", xsize=10, ysize=10)
-d.plotAll()
-
-d.setChartParameters(colourCycle=['black'], useMarker=True)
-d.plotTrace()
+d = a.trace()
+d.plot()
