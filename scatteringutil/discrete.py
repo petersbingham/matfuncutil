@@ -11,7 +11,8 @@ RYDs = 0
 eVs = 1
 
 class Base(dict):
-    def __init__(self, units=RYDs):
+    def __init__(self, d={}, units=RYDs):
+        dict.__init__(self, d)
         self.units = units
         
         self.chartTitle = ""
@@ -50,6 +51,8 @@ class Base(dict):
         for key in self.sortedKeys():
             sortedValues.append(self[key])
         return sortedValues
+    
+    #TODO __setitem__ to perform type checks.
     
     def __getitem__(self, key):
         if isinstance(key, (int, long)):
@@ -112,6 +115,7 @@ class Base(dict):
             newItem[k*fac] = v
         return newItem
 
+    #TODO Ability to append additional obects to combine in one plot.
     def plot(self, logx=False, logy=False, imag=False):
         self._initPlot()
         ls,ss = self.getPlotInfo(logx, logy, imag)
@@ -180,7 +184,7 @@ class vals(Base):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return vals(units)
+        return vals(units=units)
 
 
 class vecs(Base):
@@ -218,7 +222,7 @@ class vecs(Base):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return vecs(units)
+        return vecs(units=units)
     
     def _getSize(self):
         key = random.choice(self.keys())
@@ -269,7 +273,7 @@ class mats(Base):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return mats(units)
+        return mats(units=units)
     
     def _getSize(self):
         key = random.choice(self.keys())
@@ -277,33 +281,33 @@ class mats(Base):
 
 
 class Smats(mats):
-    def toDisTMats(self):
+    def toTMats(self):
         newItem = self._createNewItem(self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = v - nw.identity(nw.shape(v)[0])
         return newItem
-    def toDisKMats(self):
+    def toKMats(self):
         raise NotImplementedError
-    def toDisXSMats(self):
+    def toXSMats(self):
         raise NotImplementedError
-    def toDisEPhaseMats(self):
+    def toEPhaseMats(self):
         raise NotImplementedError
-    def toDisUniOpMats(self):
+    def toUniOpMats(self):
         raise NotImplementedError
 
 class Kmats(mats):
-    def toDisTMats(self):
+    def toTMats(self):
         raise NotImplementedError
-    def toDisSMats(self):
+    def toSMats(self):
         raise NotImplementedError
-    def toDisXSMats(self):
+    def toXSMats(self):
         raise NotImplementedError
 
 class Tmats(mats):
-    def toDisSMats(self):
+    def toSMats(self):
         raise NotImplementedError
-    def toDisKMats(self):
+    def toKMats(self):
         raise NotImplementedError
-    def toDisXSMats(self):
+    def toXSMats(self):
         raise NotImplementedError
