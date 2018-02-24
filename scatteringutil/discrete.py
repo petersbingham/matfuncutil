@@ -43,23 +43,23 @@ class Base(dict):
     def setPrintParameters(self, sigFigs):
         self.sigFigs = sigFigs
 
-    def sortedKeys(self):
+    def sortedEnergies(self):
         return sorted(self.keys(),key=lambda x: x.real)
 
-    def sortedValues(self):
-        sortedValues = []
-        for key in self.sortedKeys():
-            sortedValues.append(self[key])
-        return sortedValues
+    def sortedQuantities(self):
+        sortedQuantities = []
+        for key in self.sortedEnergies():
+            sortedQuantities.append(self[key])
+        return sortedQuantities
     
     #TODO __setitem__ to perform type checks.
     
     def __getitem__(self, key):
         if isinstance(key, (int, long)):
-            key = self.sortedKeys()[key]
+            key = self.sortedEnergies()[key]
             return (key, dict.__getitem__(self, key))
         elif isinstance(key, slice):
-            newKeys = self.sortedKeys()[key]
+            newKeys = self.sortedEnergies()[key]
             newItem = self._createNewItem()
             self._initNewItem(newItem)
             for ene in newKeys:
@@ -82,12 +82,12 @@ class Base(dict):
             actEndIndex = startIndex+(numPoints-1)*step
             
         return (actStartIndex,actEndIndex+1,step),\
-               (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
+               (self.sortedEnergies()[actStartIndex],self.sortedEnergies()[actEndIndex])
 
     def __str__(self):
         string = ""
         fstr = '%.'+str(self.sigFigs)+'E'
-        for ene in self.sortedKeys():
+        for ene in self.sortedEnergies():
             if ene.imag == 0.:
                 eneStr = fstr % ene.real
             elif ene.imag < 0:
@@ -170,7 +170,7 @@ class vals(Base):
     def _getPlotNums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
-        for i,ene in enumerate(self.sortedKeys()):
+        for i,ene in enumerate(self.sortedEnergies()):
             xs[i] = ene.real
             if not imag:
                 ys[i] = self[i][1].real
@@ -202,7 +202,7 @@ class vecs(Base):
         for n in range(size):
             xs = np.ndarray((len(self),), dtype=float)
             ys = np.ndarray((len(self),), dtype=float)
-            for i,ene in enumerate(self.sortedKeys()):
+            for i,ene in enumerate(self.sortedEnergies()):
                 xs[i] = ene.real
                 if not imag:
                     ys[i] = self[i][1][n].real
@@ -252,7 +252,7 @@ class mats(Base):
             for n in range(size):
                 xs = np.ndarray((len(self),), dtype=float)
                 ys = np.ndarray((len(self),), dtype=float)
-                for i,ene in enumerate(self.sortedKeys()):
+                for i,ene in enumerate(self.sortedEnergies()):
                     xs[i] = self[i][0].real
                     if not imag:
                         ys[i] = self[i][1][m,n].real
