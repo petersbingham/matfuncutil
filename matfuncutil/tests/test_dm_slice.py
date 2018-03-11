@@ -5,7 +5,7 @@ sys.path.insert(0,basedir+'/../..')
 
 import pynumwrap as nw
 import dumMats
-from scatteringutil import discrete as dis
+from matfuncutil import discrete as dis
 
 import unittest
 
@@ -18,7 +18,7 @@ class test_intElementAccess(unittest.TestCase):
         for i in range(21):
             kv = d1[i]
             self.assertEqual(kv[0], sortedKeys[i])
-            self.assertEqual(kv[1], sortedVals[i])
+            nw.areMatricesClose(kv[1], sortedVals[i])
 
 
 class sliceTestHelper(unittest.TestCase):
@@ -31,8 +31,8 @@ class sliceTestHelper(unittest.TestCase):
         actKey = float(i_off)-float(i_off)*1j
         actMat = self.calPosNegImagSubMat(i_off)
         self.assertEqual(val,actKey)
-        self.assertEqual(sortedVals[i],actMat)
-        self.assertEqual(d[val],actMat)
+        nw.areMatricesClose(sortedVals[i],actMat)
+        nw.areMatricesClose(d[val],actMat)
 
 class test_complexElementAccess(sliceTestHelper):
     def runTest(self):

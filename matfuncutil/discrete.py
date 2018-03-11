@@ -5,13 +5,8 @@ import random
 
 import pynumwrap as nw
 
-import conversions as con
-
-RYDs = 0
-eVs = 1
-
 class Base(dict):
-    def __init__(self, d={}, units=RYDs):
+    def __init__(self, d={}, units=None):
         dict.__init__(self, d)
         self.units = units
         
@@ -43,12 +38,12 @@ class Base(dict):
     def setPrintParameters(self, sigFigs):
         self.sigFigs = sigFigs
 
-    def sortedEnergies(self):
+    def sortedKeys(self):
         return sorted(self.keys(),key=lambda x: x.real)
 
-    def sortedQuantities(self):
+    def sortedValues(self):
         sortedQuantities = []
-        for key in self.sortedEnergies():
+        for key in self.sortedKeys():
             sortedQuantities.append(self[key])
         return sortedQuantities
     
@@ -56,10 +51,10 @@ class Base(dict):
     
     def __getitem__(self, key):
         if isinstance(key, (int, long)):
-            key = self.sortedEnergies()[key]
+            key = self.sortedKeys()[key]
             return (key, dict.__getitem__(self, key))
         elif isinstance(key, slice):
-            newKeys = self.sortedEnergies()[key]
+            newKeys = self.sortedKeys()[key]
             newItem = self._createNewItem()
             self._initNewItem(newItem)
             for ene in newKeys:
@@ -82,12 +77,12 @@ class Base(dict):
             actEndIndex = startIndex+(numPoints-1)*step
             
         return (actStartIndex,actEndIndex+1,step),\
-               (self.sortedEnergies()[actStartIndex],self.sortedEnergies()[actEndIndex])
+               (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
 
     def __str__(self):
         string = ""
         fstr = '%.'+str(self.sigFigs)+'E'
-        for ene in self.sortedEnergies():
+        for ene in self.sortedKeys():
             if ene.imag == 0.:
                 eneStr = fstr % ene.real
             elif ene.imag < 0:
@@ -96,24 +91,6 @@ class Base(dict):
                 eneStr = fstr % ene.real + "+" + fstr % ene.imag+"i"
             string += eneStr + ":\n" + str(self[ene]) + "\n\n"
         return string
-    
-    def convertUnits(self, units):
-        if units == self.units:
-            return self
-        elif self.units==RYDs or self.units==eVs:
-            if units==RYDs:
-                fac = 1./con.RYD_to_EV
-            elif units==eVs:
-                fac = con.RYD_to_EV
-            else:
-                raise("Unknown conversion")
-        else:
-            raise("Unknown conversion")
-        newItem = self._createNewItem(units)
-        self._initNewItem(newItem)
-        for k,v in self.iteritems():
-            newItem[k*fac] = v
-        return newItem
 
     #TODO Ability to append additional obects to combine in one plot.
     def plot(self, logx=False, logy=False, imag=False):
@@ -170,7 +147,7 @@ class vals(Base):
     def _getPlotNums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
-        for i,ene in enumerate(self.sortedEnergies()):
+        for i,ene in enumerate(self.sortedKeys()):
             xs[i] = ene.real
             if not imag:
                 ys[i] = self[i][1].real
@@ -189,7 +166,7 @@ class vals(Base):
 
 class vecs(Base):
     def reduce(self, n):
-        newItem = vals(self.units)
+        newItem = vals(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = v[n]
@@ -202,7 +179,7 @@ class vecs(Base):
         for n in range(size):
             xs = np.ndarray((len(self),), dtype=float)
             ys = np.ndarray((len(self),), dtype=float)
-            for i,ene in enumerate(self.sortedEnergies()):
+            for i,ene in enumerate(self.sortedKeys()):
                 xs[i] = ene.real
                 if not imag:
                     ys[i] = self[i][1][n].real
@@ -231,14 +208,14 @@ class vecs(Base):
 
 class mats(Base):
     def reduce(self, m):
-        newItem = vecs(self.units)
+        newItem = vecs(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.getVector(v,m)
         return newItem
 
     def trace(self):
-        newItem = vals(self.units)
+        newItem = vals(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.trace(v)
@@ -252,7 +229,7 @@ class mats(Base):
             for n in range(size):
                 xs = np.ndarray((len(self),), dtype=float)
                 ys = np.ndarray((len(self),), dtype=float)
-                for i,ene in enumerate(self.sortedEnergies()):
+                for i,ene in enumerate(self.sortedKeys()):
                     xs[i] = self[i][0].real
                     if not imag:
                         ys[i] = self[i][1][m,n].real
@@ -278,36 +255,3 @@ class mats(Base):
     def _getSize(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
-
-
-class Smats(mats):
-    def toTMats(self):
-        newItem = self._createNewItem(self.units)
-        self._initNewItem(newItem)
-        for k,v in self.iteritems():
-            newItem[k] = v - nw.identity(nw.shape(v)[0])
-        return newItem
-    def toKMats(self):
-        raise NotImplementedError
-    def toXSMats(self):
-        raise NotImplementedError
-    def toEPhaseMats(self):
-        raise NotImplementedError
-    def toUniOpMats(self):
-        raise NotImplementedError
-
-class Kmats(mats):
-    def toTMats(self):
-        raise NotImplementedError
-    def toSMats(self):
-        raise NotImplementedError
-    def toXSMats(self):
-        raise NotImplementedError
-
-class Tmats(mats):
-    def toSMats(self):
-        raise NotImplementedError
-    def toKMats(self):
-        raise NotImplementedError
-    def toXSMats(self):
-        raise NotImplementedError

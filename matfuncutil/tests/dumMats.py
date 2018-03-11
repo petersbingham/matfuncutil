@@ -2,7 +2,7 @@ import numpy as np
 
 import pynumwrap as nw
 
-from scatteringutil import discrete as dis
+from matfuncutil import discrete as dis
 
 def rowOffsetColGain_zeroImag(sz=100):
     d = dis.mats()
