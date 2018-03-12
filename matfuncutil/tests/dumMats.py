@@ -2,32 +2,32 @@ import numpy as np
 
 import pynumwrap as nw
 
-from matfuncutil import discrete as dis
+from matfuncutil import *
 
 def rowOffsetColGain_zeroImag(sz=100):
-    d = dis.mats()
+    d = dmats()
     _rowOffsetColGain_zeroImag(d,sz)
     return d
 
 def rowOffsetColGain_posImag(sz=100):
-    d = dis.mats()
+    d = dmats()
     _rowOffsetColGain_posImag(d,sz)
     return d
 
 def rowOffsetColGain_negImag(sz=100):
-    d = dis.mats()
+    d = dmats()
     _rowOffsetColGain_negImag(d,sz)
     return d
 
 def rowOffsetColGain_posNegImag(rg=10):
-    d = dis.mats()
+    d = dmats()
     _rowOffsetColGain_posNegImag(d,rg)
     return d
 
 
 
 def rowOffsetColGain_zeroImag_Smat(sz=100):
-    d = dis.Smats()
+    d = dmats()
     _rowOffsetColGain_zeroImag(d,sz)
     return d
 
@@ -67,19 +67,19 @@ def _getNonUniMat():
                       [0, 0,1.j]])
 
 def twoUnitary():
-    d = dis.mats()
+    d = dmats()
     d[1.0] = _getUniMat()
     d[2.0] = _getUniMat()
     return d
 
 def oneUnitary():
-    d = dis.mats()
+    d = dmats()
     d[1.0] = _getUniMat()
     d[2.0] = _getNonUniMat()
     return d
 
 def noneUnitary():
-    d = dis.mats()
+    d = dmats()
     d[1.0] = _getNonUniMat()
     d[2.0] = _getNonUniMat()
     return d
@@ -97,7 +97,7 @@ def getComplex1Absolute():
                       [4.2426406871192851464050661726291, 5.6568542494923801952067548968388]])
 
 def getAbsoluteTest():
-    d = dis.mats()
+    d = dmats()
     d[1.0] = getIdentity()
     d[2.0] = _getComplex1()
     return d

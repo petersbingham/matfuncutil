@@ -5,7 +5,7 @@ import random
 
 import pynumwrap as nw
 
-class Base(dict):
+class D(dict):
     def __init__(self, d={}, units=None):
         dict.__init__(self, d)
         self.units = units
@@ -143,7 +143,7 @@ class Base(dict):
         item.setPrintParameters(self.sigFigs)
     
 
-class vals(Base):
+class dvals(D):
     def _getPlotNums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
@@ -161,12 +161,12 @@ class vals(Base):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return vals(units=units)
+        return dvals(units=units)
 
 
-class vecs(Base):
+class dvecs(D):
     def reduce(self, n):
-        newItem = vals(units=self.units)
+        newItem = dvals(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = v[n]
@@ -199,37 +199,37 @@ class vecs(Base):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return vecs(units=units)
+        return dvecs(units=units)
     
     def _getSize(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
 
 
-class mats(Base):
+class dmats(D):
     def reduce(self, m):
-        newItem = vecs(units=self.units)
+        newItem = dvecs(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.getVector(v,m)
         return newItem
 
     def trace(self):
-        newItem = vals(units=self.units)
+        newItem = dvals(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.trace(v)
         return newItem
 
     def absolute(self):
-        newItem = vals(units=self.units)
+        newItem = dvals(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.absolute(v)
         return newItem
 
     def unitaryOp(self):
-        newItem = mats(units=self.units)
+        newItem = dmats(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.transpose(nw.conjugate(v))
@@ -270,7 +270,7 @@ class mats(Base):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return mats(units=units)
+        return dmats(units=units)
     
     def _getSize(self):
         key = random.choice(self.keys())
