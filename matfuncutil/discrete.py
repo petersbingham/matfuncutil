@@ -221,6 +221,26 @@ class mats(Base):
             newItem[k] = nw.trace(v)
         return newItem
 
+    def absolute(self):
+        newItem = vals(units=self.units)
+        self._initNewItem(newItem)
+        for k,v in self.iteritems():
+            newItem[k] = nw.absolute(v)
+        return newItem
+
+    def unitaryOp(self):
+        newItem = mats(units=self.units)
+        self._initNewItem(newItem)
+        for k,v in self.iteritems():
+            newItem[k] = nw.transpose(nw.conjugate(v))
+        return newItem
+
+    def isUnitary(self, rtol=1e-05, atol=1e-08):
+        for v in self.values():
+            if not nw.isUnitary(v, rtol, atol):
+                return False
+        return True
+
     def _getPlotNums(self, imag):
         xss = []
         yss = []
