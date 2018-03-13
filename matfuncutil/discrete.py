@@ -5,7 +5,7 @@ import random
 
 import pynumwrap as nw
 
-class D(dict):
+class dBase(dict):
     def __init__(self, d={}, units=None):
         dict.__init__(self, d)
         self.units = units
@@ -18,7 +18,7 @@ class D(dict):
         self.ysize = None
         
         self.sigFigs = 6
-    
+
     def setChartParameters(self, chartTitle=None, colourCycle=None, 
                            legPrefix=None, useMarker=None, xsize=None, 
                            ysize=None):
@@ -34,7 +34,7 @@ class D(dict):
             self.xsize = xsize
         if ysize is not None:
             self.ysize = ysize
-    
+
     def setPrintParameters(self, sigFigs):
         self.sigFigs = sigFigs
 
@@ -46,9 +46,9 @@ class D(dict):
         for key in self.sortedKeys():
             sortedQuantities.append(self[key])
         return sortedQuantities
-    
+
     #TODO __setitem__ to perform type checks.
-    
+
     def __getitem__(self, key):
         if isinstance(key, (int, long)):
             key = self.sortedKeys()[key]
@@ -63,11 +63,11 @@ class D(dict):
         else:
             return dict.__getitem__(self, key)
 
-    def calculateReductionIndices(self, startIndex, endIndex, numPoints, 
+    def calculateReductionIndices(self, startIndex, endIndex, numPoints,
                                   fromEnd=False):
         if endIndex-startIndex+1 < numPoints:
             raise IndexError
-        
+
         step = int((endIndex-startIndex) /(numPoints-1))
         if fromEnd:
             actStartIndex = startIndex+(endIndex-startIndex) - (numPoints-1)*step
@@ -75,7 +75,7 @@ class D(dict):
         else:
             actStartIndex = startIndex
             actEndIndex = startIndex+(numPoints-1)*step
-            
+
         return (actStartIndex,actEndIndex+1,step),\
                (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
 
@@ -114,7 +114,7 @@ class D(dict):
     def _getPlotInfo(self, logx, logy, imag):
         xss, yss = self._getPlotNums(imag)
         return (self._getPlotLineFromNums(xss, yss, logx, logy), self._getPlotLegends())
-    
+
     def _getPlotLineFromNums(self, xss, yss, logx, logy):
         lnes = []
         for xs, ys in zip(xss, yss):
@@ -138,12 +138,12 @@ class D(dict):
     def _initNewItem(self, item, units=None):
         if units is None:
             units = self.units
-        item.setChartParameters(self.chartTitle, self.colourCycle, 
+        item.setChartParameters(self.chartTitle, self.colourCycle,
                                   self.legPrefix, self.useMarker)
         item.setPrintParameters(self.sigFigs)
-    
 
-class dvals(D):
+
+class dvals(dBase):
     def _getPlotNums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
@@ -164,7 +164,7 @@ class dvals(D):
         return dvals(units=units)
 
 
-class dvecs(D):
+class dvecs(dBase):
     def reduce(self, n):
         newItem = dvals(units=self.units)
         self._initNewItem(newItem)
@@ -200,13 +200,13 @@ class dvecs(D):
         if units is None:
             units = self.units
         return dvecs(units=units)
-    
+
     def _getSize(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
 
 
-class dmats(D):
+class dmats(dBase):
     def reduce(self, m):
         newItem = dvecs(units=self.units)
         self._initNewItem(newItem)
@@ -271,7 +271,7 @@ class dmats(D):
         if units is None:
             units = self.units
         return dmats(units=units)
-    
+
     def _getSize(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
