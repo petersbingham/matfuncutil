@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='matfuncutil',
-      version='0.4',
+      version='0.5',
       description='Containers for functional data in discrete and continuous forms.',
       author="Peter Bingham",
       author_email="petersbingham@hotmail.co.uk",

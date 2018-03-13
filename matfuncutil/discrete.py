@@ -166,7 +166,7 @@ class dvals(dBase):
 
 class dvecs(dBase):
     def reduce(self, n):
-        newItem = dvals(units=self.units)
+        newItem = self._getReductionContainer()
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = v[n]
@@ -205,10 +205,12 @@ class dvecs(dBase):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
 
+    def _getReductionContainer(self):
+        return dvals(units=self.units)
 
 class dmats(dBase):
     def reduce(self, m):
-        newItem = dvecs(units=self.units)
+        newItem = self._getReductionContainer()
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.getVector(v,m)
@@ -275,3 +277,6 @@ class dmats(dBase):
     def _getSize(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
+
+    def _getReductionContainer(self):
+        return dvecs(units=self.units)
