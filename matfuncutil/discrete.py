@@ -143,7 +143,7 @@ class dBase(dict):
         item.setPrintParameters(self.sigFigs)
 
 
-class dvals(dBase):
+class dVal(dBase):
     def _getPlotNums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
@@ -161,10 +161,10 @@ class dvals(dBase):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return dvals(units=units)
+        return dVal(units=units)
 
 
-class dvecs(dBase):
+class dVec(dBase):
     def reduce(self, n):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
@@ -199,16 +199,16 @@ class dvecs(dBase):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return dvecs(units=units)
+        return dVec(units=units)
 
     def _getSize(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
 
     def _getReductionContainer(self):
-        return dvals(units=self.units)
+        return dVal(units=self.units)
 
-class dmats(dBase):
+class dMat(dBase):
     def reduce(self, m):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
@@ -217,21 +217,21 @@ class dmats(dBase):
         return newItem
 
     def trace(self):
-        newItem = dvals(units=self.units)
+        newItem = dVal(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.trace(v)
         return newItem
 
     def absolute(self):
-        newItem = dvals(units=self.units)
+        newItem = dVal(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.absolute(v)
         return newItem
 
     def unitaryOp(self):
-        newItem = dmats(units=self.units)
+        newItem = dMat(units=self.units)
         self._initNewItem(newItem)
         for k,v in self.iteritems():
             newItem[k] = nw.transpose(nw.conjugate(v))
@@ -272,11 +272,18 @@ class dmats(dBase):
     def _createNewItem(self, units=None):
         if units is None:
             units = self.units
-        return dmats(units=units)
+        return dMat(units=units)
 
     def _getSize(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
 
     def _getReductionContainer(self):
-        return dvecs(units=self.units)
+        return dVec(units=self.units)
+
+
+def usePythonTypes_d(dps=nw.dps_default_python):
+    nw.usePythonTypes(dps)
+
+def useMpmathTypes_d(dps=nw.dps_default_mpmath):
+    nw.useMpmathTypes(dps)

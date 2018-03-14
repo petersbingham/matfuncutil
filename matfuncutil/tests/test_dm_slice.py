@@ -5,7 +5,6 @@ sys.path.insert(0,basedir+'/../..')
 
 import pynumwrap as nw
 import dumMats
-from matfuncutil import discrete as dis
 
 import unittest
 
@@ -14,11 +13,11 @@ class test_intElementAccess(unittest.TestCase):
         d1 = dumMats.rowOffsetColGain_posNegImag()
         self.assertEqual(len(d1),21)
         sortedKeys = d1.sortedKeys()
-        sortedVals = d1.sortedValues()
+        sortedVal = d1.sortedValues()
         for i in range(21):
             kv = d1[i]
             self.assertEqual(kv[0], sortedKeys[i])
-            nw.areMatricesClose(kv[1], sortedVals[i])
+            nw.areMatricesClose(kv[1], sortedVal[i])
 
 
 class sliceTestHelper(unittest.TestCase):
@@ -27,21 +26,21 @@ class sliceTestHelper(unittest.TestCase):
     def calPosNegImagSubMat(self, i):
         return nw.matrix([[float(i), 2*float(i)], 
                          [10+float(i), 10+2*float(i)]])
-    def checkPosNegImagSub(self, d, sortedVals, i, i_off, val):
+    def checkPosNegImagSub(self, d, sortedVal, i, i_off, val):
         actKey = float(i_off)-float(i_off)*1j
         actMat = self.calPosNegImagSubMat(i_off)
         self.assertEqual(val,actKey)
-        nw.areMatricesClose(sortedVals[i],actMat)
+        nw.areMatricesClose(sortedVal[i],actMat)
         nw.areMatricesClose(d[val],actMat)
 
 class test_complexElementAccess(sliceTestHelper):
     def runTest(self):
         d1 = dumMats.rowOffsetColGain_posNegImag()
         sortedKeys = d1.sortedKeys()
-        sortedVals = d1.sortedValues()
+        sortedVal = d1.sortedValues()
         for i,val in enumerate(sortedKeys):
             i_off = i-10
-            self.checkPosNegImagSub(d1, sortedVals, i, i_off, val)
+            self.checkPosNegImagSub(d1, sortedVal, i, i_off, val)
 
 class test_simpSlice(sliceTestHelper):
     def runTest(self):
@@ -49,10 +48,10 @@ class test_simpSlice(sliceTestHelper):
         d2 = d1[1:-1]
         self.assertEqual(len(d2),19)
         sortedKeys = d2.sortedKeys()
-        sortedVals = d2.sortedValues()
+        sortedVal = d2.sortedValues()
         for i,val in enumerate(sortedKeys):
             i_off = i-9
-            self.checkPosNegImagSub(d1, sortedVals, i, i_off, val)
+            self.checkPosNegImagSub(d1, sortedVal, i, i_off, val)
 
 class test_stepSlice(sliceTestHelper):
     def runTest(self):
@@ -60,10 +59,10 @@ class test_stepSlice(sliceTestHelper):
         d2 = d1[::2]
         self.assertEqual(len(d2),11)
         sortedKeys = d2.sortedKeys()
-        sortedVals = d2.sortedValues()
+        sortedVal = d2.sortedValues()
         for i,val in enumerate(sortedKeys):
             i_off = i*2-10
-            self.checkPosNegImagSub(d1, sortedVals, i, i_off, val)
+            self.checkPosNegImagSub(d1, sortedVal, i, i_off, val)
 
 class test_stepSliceRange(sliceTestHelper):
     def runTest(self):
@@ -71,10 +70,10 @@ class test_stepSliceRange(sliceTestHelper):
         d2 = d1[1:-1:2]
         self.assertEqual(len(d2),10)
         sortedKeys = d2.sortedKeys()
-        sortedVals = d2.sortedValues()
+        sortedVal = d2.sortedValues()
         for i,val in enumerate(sortedKeys):
             i_off = i*2-9
-            self.checkPosNegImagSub(d1, sortedVals, i, i_off, val)
+            self.checkPosNegImagSub(d1, sortedVal, i, i_off, val)
         
 class test_calculateReductionIndices(sliceTestHelper):
     def runTest(self):

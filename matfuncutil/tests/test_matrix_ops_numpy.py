@@ -25,9 +25,9 @@ class test_absolute(unittest.TestCase):
     def runTest(self):
         d = dumMats.getAbsoluteTest()
         d_abs = d.absolute()
-        self.assertTrue(dumMats.dis.nw.areMatricesClose(d_abs[1.0],
+        self.assertTrue(dumMats.mfc.nw.areMatricesClose(d_abs[1.0],
                                                         dumMats.getIdentity()))
-        self.assertTrue(dumMats.dis.nw.areMatricesClose(d_abs[2.0],
+        self.assertTrue(dumMats.mfc.nw.areMatricesClose(d_abs[2.0],
                                                 dumMats.getComplex1Absolute()))
         
 
