@@ -46,13 +46,14 @@ class cMat(cBase):
 
 class cPolyVal(cVal):
     def __init__(self, symVal, symVar, units=None):
-        cMat.__init__(self, lambda val: nw.fromSympy(symVal.subs(symVar, val)),
+        cVal.__init__(self, lambda val: nw.fromSympy(symVal.subs(symVar, val)),
                        units)
         self.symVal = symVal
         self.symVar = symVar
 
     def findRoots(self, **kwargs):
-        poly = sympy.polys.Poly(deter, self.symVal) 
+        var = sympy.symbols(self.symVar)
+        poly = sympy.polys.Poly(self.symVal, var) 
         return nw.rootsSym(poly, **kwargs)
 
 class cPolyMat(cMat):
