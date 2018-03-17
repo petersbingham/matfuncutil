@@ -5,7 +5,7 @@ import random
 
 import pynumwrap as nw
 
-class dBase(dict):
+class dBase(dict, object):
     def __init__(self, d={}, units=None):
         dict.__init__(self, d)
         self.units = units
@@ -147,6 +147,11 @@ class dBase(dict):
                                   self.legPrefix, self.useMarker)
         item.setPrintParameters(self.sigFigs)
 
+    def _createNewItem(self, units=None):
+        if units is None:
+            units = self.units
+        return type(self)(units=units)
+
 
 class dVal(dBase):
     def _getPlotNums(self, imag):
@@ -162,11 +167,6 @@ class dVal(dBase):
 
     def _getPlotLegends(self):
         return None
-
-    def _createNewItem(self, units=None):
-        if units is None:
-            units = self.units
-        return dVal(units=units)
 
 
 class dVec(dBase):
@@ -200,11 +200,6 @@ class dVec(dBase):
         for n in range(size):
             legStrs.append(self.legPrefix + ": "+str(n))
         return legStrs
-
-    def _createNewItem(self, units=None):
-        if units is None:
-            units = self.units
-        return dVec(units=units)
 
     def _getSize(self):
         key = random.choice(self.keys())
@@ -273,11 +268,6 @@ class dMat(dBase):
             for n in range(size):
                 legStrs.append(self.legPrefix + ": "+str(m)+","+str(n))
         return legStrs
-
-    def _createNewItem(self, units=None):
-        if units is None:
-            units = self.units
-        return dMat(units=units)
 
     def _getSize(self):
         key = random.choice(self.keys())

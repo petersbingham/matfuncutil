@@ -5,7 +5,7 @@ import shutil
 shutil.copy('README.md', 'matfuncutil/README.md')
 
 setup(name='matfuncutil',
-      version='0.9',
+      version='0.10',
       description='Containers for functional data in discrete and continuous forms.',
       author="Peter Bingham",
       author_email="petersbingham@hotmail.co.uk",
