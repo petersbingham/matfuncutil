@@ -10,5 +10,5 @@ setup(name='matfuncutil',
       author="Peter Bingham",
       author_email="petersbingham@hotmail.co.uk",
       packages=['matfuncutil'],
-      package_data={'matfuncutil': ['tests/*', 'README.md'],
+      package_data={'matfuncutil': ['tests/*', 'README.md']}
      )
