@@ -8,6 +8,11 @@ class cBase:
     def __init__(self, funPtr, units=None):
         self.funPtr = funPtr
         self.units = units
+        
+        self.typeMode = nw.mode
+
+    def getMode(self):
+        return self.typeMode
 
     def __call__(self, val):
         return self.funPtr(val)

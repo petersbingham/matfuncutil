@@ -17,7 +17,12 @@ class dBase(dict):
         self.xsize = None
         self.ysize = None
         
+        self.typeMode = nw.mode
+        
         self.sigFigs = 6
+
+    def getMode(self):
+        return self.typeMode
 
     def setChartParameters(self, chartTitle=None, colourCycle=None, 
                            legPrefix=None, useMarker=None, xsize=None, 
@@ -209,11 +214,11 @@ class dVec(dBase):
         return dVal(units=self.units)
 
 class dMat(dBase):
-    def reduce(self, m):
+    def reduce(self, m, isCol):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
         for k,v in self.iteritems():
-            newItem[k] = nw.getVector(v,m)
+            newItem[k] = nw.getVector(v,m,isCol)
         return newItem
 
     def trace(self):
