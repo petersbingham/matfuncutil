@@ -24,11 +24,11 @@ class dBase(dict, object):
     def getMode(self):
         return self.typeMode
 
-    def setChartParameters(self, chartTitle=None, colourCycle=None, 
-                           legPrefix=None, useMarker=None, xsize=None, 
-                           ysize=None):
-        if chartTitle is not None:
-            self.chartTitle = chartTitle
+    def setChartTitle(self, chartTitle):
+        self.chartTitle = chartTitle
+
+    def setChartParameters(self, colourCycle=None, legPrefix=None, useMarker=None, 
+                           xsize=None, ysize=None):
         if colourCycle is not None:
             self.colourCycle = colourCycle
         if legPrefix is not None:
@@ -97,13 +97,21 @@ class dBase(dict, object):
             string += eneStr + ":\n" + str(self[ene]) + "\n\n"
         return string
 
-    #TODO Ability to append additional obects to combine in one plot.
-    def plot(self, logx=False, logy=False, imag=False):
+    #TODO Ability to append additional objects to combine in one plot.
+    def plot(self, logx=False, logy=False, imag=False, show=True, 
+             fileName=None):
+        p = self._plot(logx, logy, imag)
+        if fileName is not None:
+            p.savefig(fileName, bbox_inches='tight')
+        if show:
+            p.show()
+
+    def _plot(self, logx=False, logy=False, imag=False):
         self._initPlot()
         ls,ss = self.getPlotInfo(logx, logy, imag)
         if ss is not None:
             plt.legend(ls, ss)
-        plt.show()
+        return plt
 
     def getPlotInfo(self, logx=False, logy=False, imag=False):
         ls,ss = self._getPlotInfo(logx, logy, imag)
@@ -118,7 +126,8 @@ class dBase(dict, object):
 
     def _getPlotInfo(self, logx, logy, imag):
         xss, yss = self._getPlotNums(imag)
-        return (self._getPlotLineFromNums(xss, yss, logx, logy), self._getPlotLegends())
+        return (self._getPlotLineFromNums(xss, yss, logx, logy), 
+                self._getPlotLegends())
 
     def _getPlotLineFromNums(self, xss, yss, logx, logy):
         lnes = []
@@ -143,14 +152,15 @@ class dBase(dict, object):
     def _initNewItem(self, item, units=None):
         if units is None:
             units = self.units
-        item.setChartParameters(self.chartTitle, self.colourCycle,
-                                  self.legPrefix, self.useMarker)
+        item.setChartParameters(self.colourCycle, self.legPrefix, self.useMarker)
         item.setPrintParameters(self.sigFigs)
 
-    def _createNewItem(self, units=None):
+    def _createNewItem(self, units=None, newType=None):
         if units is None:
             units = self.units
-        return type(self)(units=units)
+        if newType is None:
+            newType = type(self)
+        return newType(units=units)
 
 
 class dVal(dBase):
@@ -173,6 +183,7 @@ class dVec(dBase):
     def reduce(self, n):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
+        newItem.setChartTitle(self.chartTitle)
         for k,v in self.iteritems():
             newItem[k] = v[n]
         return newItem
@@ -209,9 +220,10 @@ class dVec(dBase):
         return dVal(units=self.units)
 
 class dMat(dBase):
-    def reduce(self, m, isCol):
+    def reduce(self, m, isCol=False):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
+        newItem.setChartTitle(self.chartTitle)
         for k,v in self.iteritems():
             newItem[k] = nw.getVector(v,m,isCol)
         return newItem

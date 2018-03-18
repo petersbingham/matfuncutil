@@ -9,7 +9,7 @@ a = dumMats.rowOffsetColGain_zeroImag()
 a.plot()
 
 b = a.reduce(0)
-b.setChartParameters(chartTitle="Test title")
+b.setChartTitle("Test title")
 b.plot(logx=True, logy=True)
 
 c = b.reduce(1)
