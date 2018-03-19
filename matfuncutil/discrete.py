@@ -18,11 +18,15 @@ class dBase(dict, object):
         self.ysize = None
         
         self.typeMode = nw.mode
+        self.typeDps = nw.dps
         
         self.sigFigs = 6
 
-    def getMode(self):
+    def getTypeMode(self):
         return self.typeMode
+
+    def getTypeDps(self):
+        return self.typeDps
 
     def setChartTitle(self, chartTitle):
         self.chartTitle = chartTitle
@@ -294,3 +298,15 @@ def usePythonTypes_d(dps=nw.dps_default_python):
 
 def useMpmathTypes_d(dps=nw.dps_default_mpmath):
     nw.useMpmathTypes(dps)
+
+def setTypeMode_d(mode, dps=None):
+    if mode is None or mode == nw.mode_python:
+        if dps is None:
+            usePythonTypes_d(nw.dps_default_python)
+        else:
+            usePythonTypes_d(dps)
+    else:
+        if dps is None:
+            useMpmathTypes_d(nw.dps_default_mpmath)
+        else:
+            useMpmathTypes_d(dps)

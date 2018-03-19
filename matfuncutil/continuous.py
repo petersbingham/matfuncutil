@@ -82,3 +82,15 @@ def usePythonTypes_c(dps=nw.dps_default_python):
 
 def useMpmathTypes_c(dps=nw.dps_default_mpmath):
     nw.useMpmathTypes(dps)
+
+def setTypeMode_c(mode, dps=None):
+    if mode is None or mode == nw.mode_python:
+        if dps is None:
+            usePythonTypes_c(nw.dps_default_python)
+        else:
+            usePythonTypes_c(dps)
+    else:
+        if dps is None:
+            useMpmathTypes_c(nw.dps_default_mpmath)
+        else:
+            useMpmathTypes_c(dps)

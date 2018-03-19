@@ -7,3 +7,7 @@ def usePythonTypes(dps=nw.dps_default_python):
 def useMpmathTypes(dps=nw.dps_default_mpmath):
     useMpmathTypes_d(dps)
     useMpmathTypes_c(dps)
+
+def setTypeMode(mode, dps=None):
+    setTypeMode_d(mode, dps)
+    setTypeMode_c(mode, dps)
