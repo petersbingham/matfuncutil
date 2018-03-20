@@ -1,5 +1,5 @@
 try:
-    import sympy
+    import sympy as sym
 except:
     pass
 from discrete import *
@@ -10,6 +10,7 @@ class cBase:
         self.units = units
         
         self.typeMode = nw.mode
+        self.typeDps = nw.dps
 
     def getMode(self):
         return self.typeMode
@@ -57,9 +58,15 @@ class cPolyVal(cVal):
         self.symVar = symVar
 
     def findRoots(self, **kwargs):
-        var = sympy.symbols(self.symVar)
-        poly = sympy.polys.Poly(self.symVal, var) 
-        return nw.rootsSym(poly, **kwargs)
+        var = sym.symbols(self.symVar)
+        poly = sym.polys.Poly(self.symVal, var)
+        if "nw_rootsSym" in kwargs:
+            if "symPoly_nroots" in kwargs["nw_rootsSym"]:
+                if "n" in kwargs["nw_rootsSym"]["symPoly_nroots"] and \
+                kwargs["nw_rootsSym"]["symPoly_nroots"]["n"]=="dps":
+                    kwargs["nw_rootsSym"]["symPoly_nroots"]["n"] = self.typeDps
+            return nw.rootsSym(poly, **kwargs["nw_rootsSym"])
+        return nw.rootsSym(poly)
 
 class cPolyMat(cMat):
     def __init__(self, symMat, symVar, units=None):
@@ -70,8 +77,8 @@ class cPolyMat(cMat):
         self.symVar = symVar
 
     def determinant(self, **kwargs):
-        if "method" in kwargs:
-            det = self.symMat.det(kwargs["method"])
+        if "sym_matrix_det" in kwargs:
+            det = self.symMat.det(**kwargs["sym_matrix_det"])
         else:
             det = self.symMat.det()
         return cPolyVal(det, self.symVar, self.units)
