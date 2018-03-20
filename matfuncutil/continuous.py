@@ -8,12 +8,6 @@ class cBase:
     def __init__(self, funPtr, units=None):
         self.funPtr = funPtr
         self.units = units
-        
-        self.typeMode = nw.mode
-        self.typeDps = nw.dps
-
-    def getMode(self):
-        return self.typeMode
 
     def __call__(self, val):
         return self.funPtr(val)
@@ -64,7 +58,7 @@ class cPolyVal(cVal):
             if "symPoly_nroots" in kwargs["nw_rootsSym"]:
                 if "n" in kwargs["nw_rootsSym"]["symPoly_nroots"] and \
                 kwargs["nw_rootsSym"]["symPoly_nroots"]["n"]=="dps":
-                    kwargs["nw_rootsSym"]["symPoly_nroots"]["n"] = self.typeDps
+                    kwargs["nw_rootsSym"]["symPoly_nroots"]["n"] = nw.dps
             return nw.rootsSym(poly, **kwargs["nw_rootsSym"])
         return nw.rootsSym(poly)
 
@@ -82,22 +76,3 @@ class cPolyMat(cMat):
         else:
             det = self.symMat.det()
         return cPolyVal(det, self.symVar, self.units)
-
-
-def usePythonTypes_c(dps=nw.dps_default_python):
-    nw.usePythonTypes(dps)
-
-def useMpmathTypes_c(dps=nw.dps_default_mpmath):
-    nw.useMpmathTypes(dps)
-
-def setTypeMode_c(mode, dps=None):
-    if mode is None or mode == nw.mode_python:
-        if dps is None:
-            usePythonTypes_c(nw.dps_default_python)
-        else:
-            usePythonTypes_c(dps)
-    else:
-        if dps is None:
-            useMpmathTypes_c(nw.dps_default_mpmath)
-        else:
-            useMpmathTypes_c(dps)
