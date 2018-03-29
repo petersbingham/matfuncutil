@@ -89,7 +89,7 @@ class dBase(dict, object):
         return (actStartIndex,actEndIndex+1,step),\
                (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
 
-    def createReducedSize(self, start, end, numPoints, fromEnd=False):
+    def createReducedLength(self, start, end, numPoints, fromEnd=False):
         si = self.getSliceIndices(start, end, numPoints, fromEnd)[0]
         return self[si[0]:si[1]:si[2]]
 

@@ -24,5 +24,5 @@ cSin = dumMats.mfc.cVal(math.sin)
 dSin = cSin.discretise(-2*math.pi, 2*math.pi, 200)
 dSin.plot()
 
-dSin2 = dSin.createReducedSize(-math.pi, math.pi, 20)
+dSin2 = dSin.createReducedLength(-math.pi, math.pi, 20)
 dSin2.plot()
