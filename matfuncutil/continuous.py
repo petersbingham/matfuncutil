@@ -12,10 +12,16 @@ class cBase:
     def __call__(self, val):
         return self.funPtr(val)
 
-    def discretise(self, startVal, endVal, steps):
+    def isContinuous(self):
+        return True
+
+    def isDiscrete(self):
+        return False
+
+    def discretise(self, startVal, endVal, numPoints):
         dcont = self._getDiscreteContainer()
-        sz = (endVal-startVal) / steps
-        for i in range(steps+1):
+        sz = (endVal-startVal) / (numPoints-1)
+        for i in range(numPoints):
             val = startVal +  sz*i
             dcont[val] = self(val)
         return dcont

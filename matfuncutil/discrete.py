@@ -19,6 +19,12 @@ class dBase(dict, object):
         
         self.sigFigs = 6
 
+    def isContinuous(self):
+        return False
+
+    def isDiscrete(self):
+        return True
+
     def setChartTitle(self, chartTitle):
         self.chartTitle = chartTitle
 
@@ -63,21 +69,29 @@ class dBase(dict, object):
         else:
             return dict.__getitem__(self, key)
 
-    def calculateReductionIndices(self, startIndex, endIndex, numPoints,
-                                  fromEnd=False):
-        if endIndex-startIndex+1 < numPoints:
+    def getSliceIndices(self, start, end, numPoints, fromEnd=False):
+        if isinstance(start, float):
+            start = self._getNearestIndex(start)
+        if isinstance(end, float):
+            end = self._getNearestIndex(end)
+
+        if end-start+1 < numPoints:
             raise IndexError
 
-        step = int((endIndex-startIndex) /(numPoints-1))
+        step = int((end-start) /(numPoints-1))
         if fromEnd:
-            actStartIndex = startIndex+(endIndex-startIndex) - (numPoints-1)*step
-            actEndIndex = endIndex
+            actStartIndex = start+(end-start) - (numPoints-1)*step
+            actEndIndex = end
         else:
-            actStartIndex = startIndex
-            actEndIndex = startIndex+(numPoints-1)*step
+            actStartIndex = start
+            actEndIndex = start+(numPoints-1)*step
 
         return (actStartIndex,actEndIndex+1,step),\
                (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
+
+    def createReducedSize(self, start, end, numPoints, fromEnd=False):
+        si = self.getSliceIndices(start, end, numPoints, fromEnd)[0]
+        return self[si[0]:si[1]:si[2]]
 
     def __str__(self):
         string = ""
@@ -144,6 +158,17 @@ class dBase(dict, object):
             lnes.append(lne)
         return lnes
 
+    def _getNearestIndex(self, ene):
+        laste = None
+        for i,e in enumerate(self.sortedKeys()):
+            if e >= ene:
+                if laste is None or abs(ene-e) < abs(ene-laste):
+                    return i
+                else:
+                    return i-1
+            laste = e
+        return i
+
     def _initNewItem(self, item, units=None):
         if units is None:
             units = self.units
@@ -175,7 +200,7 @@ class dVal(dBase):
 
 
 class dVec(dBase):
-    def reduce(self, n):
+    def createReducedDim(self, n):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
         newItem.setChartTitle(self.chartTitle)
@@ -215,7 +240,7 @@ class dVec(dBase):
         return dVal(units=self.units)
 
 class dMat(dBase):
-    def reduce(self, m, isCol=False):
+    def createReducedDim(self, m, isCol=False):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
         newItem.setChartTitle(self.chartTitle)

@@ -75,41 +75,41 @@ class test_stepSliceRange(sliceTestHelper):
             i_off = i*2-9
             self.checkPosNegImagSub(d1, sortedVal, i, i_off, val)
         
-class test_calculateReductionIndices(sliceTestHelper):
+class test_getSliceIndices(sliceTestHelper):
     def runTest(self):
         d1 = dumMats.rowOffsetColGain_posNegImag()
 
-        ret = d1.calculateReductionIndices(0,20,3)
+        ret = d1.getSliceIndices(0,20,3)
         self.assertEqual(ret[0],(0,21,10))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-10),
                                  self.calPosNegImagEne(10)))
 
-        ret = d1.calculateReductionIndices(1,19,3)
+        ret = d1.getSliceIndices(1,19,3)
         self.assertEqual(ret[0],(1,20,9))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-9),
                                  self.calPosNegImagEne(9)))
 
-        ret = d1.calculateReductionIndices(0,20,4)
+        ret = d1.getSliceIndices(0,20,4)
         self.assertEqual(ret[0],(0,19,6))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-10),
                                  self.calPosNegImagEne(8)))
 
-        ret = d1.calculateReductionIndices(1,19,4)
+        ret = d1.getSliceIndices(1,19,4)
         self.assertEqual(ret[0],(1,20,6))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-9),
                                  self.calPosNegImagEne(9)))
 
-        ret = d1.calculateReductionIndices(0,20,10)
+        ret = d1.getSliceIndices(0,20,10)
         self.assertEqual(ret[0],(0,19,2))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-10),
                                  self.calPosNegImagEne(8)))
 
-        ret = d1.calculateReductionIndices(1,19,10)
+        ret = d1.getSliceIndices(1,19,10)
         self.assertEqual(ret[0],(1,20,2))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-9),
                                  self.calPosNegImagEne(9)))
 
-        ret = d1.calculateReductionIndices(2,19,10)
+        ret = d1.getSliceIndices(2,19,10)
         self.assertEqual(ret[0],(2,12,1))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-8),
                                  self.calPosNegImagEne(1)))
@@ -118,37 +118,37 @@ class test_calculateReductionIndicesFromEnd(sliceTestHelper):
     def runTest(self):
         d1 = dumMats.rowOffsetColGain_posNegImag()
 
-        ret = d1.calculateReductionIndices(0,20,3,True)
+        ret = d1.getSliceIndices(0,20,3,True)
         self.assertEqual(ret[0],(0,21,10))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-10),
                                  self.calPosNegImagEne(10)))
 
-        ret = d1.calculateReductionIndices(1,19,3,True)
+        ret = d1.getSliceIndices(1,19,3,True)
         self.assertEqual(ret[0],(1,20,9))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-9),
                                  self.calPosNegImagEne(9)))
 
-        ret = d1.calculateReductionIndices(0,20,4,True)
+        ret = d1.getSliceIndices(0,20,4,True)
         self.assertEqual(ret[0],(2,21,6))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-8),
                                  self.calPosNegImagEne(10)))
 
-        ret = d1.calculateReductionIndices(1,19,4,True)
+        ret = d1.getSliceIndices(1,19,4,True)
         self.assertEqual(ret[0],(1,20,6))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-9),
                                  self.calPosNegImagEne(9)))
 
-        ret = d1.calculateReductionIndices(0,20,10,True)
+        ret = d1.getSliceIndices(0,20,10,True)
         self.assertEqual(ret[0],(2,21,2))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-8),
                                  self.calPosNegImagEne(10)))
 
-        ret = d1.calculateReductionIndices(1,19,10,True)
+        ret = d1.getSliceIndices(1,19,10,True)
         self.assertEqual(ret[0],(1,20,2))
         self.assertEqual(ret[1],(self.calPosNegImagEne(-9),
                                  self.calPosNegImagEne(9)))
 
-        ret = d1.calculateReductionIndices(2,19,10,True)
+        ret = d1.getSliceIndices(2,19,10,True)
         self.assertEqual(ret[0],(10,20,1))
         self.assertEqual(ret[1],(self.calPosNegImagEne(0),
                                  self.calPosNegImagEne(9)))
