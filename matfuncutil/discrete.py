@@ -18,6 +18,7 @@ class dBase(dict, object):
         self.ysize = None
         
         self.sigFigs = 6
+        self.histStr = ""
 
     def isContinuous(self):
         return False
@@ -53,7 +54,7 @@ class dBase(dict, object):
             sortedQuantities.append(self[key])
         return sortedQuantities
 
-    #TODO __setitem__ to perform type checks.
+    #TODO __setitem__ to perform type checks and update histStr
 
     def __getitem__(self, key):
         if isinstance(key, (int, long)):
@@ -63,6 +64,8 @@ class dBase(dict, object):
             newKeys = self.sortedKeys()[key]
             newItem = self._createNewItem()
             self._initNewItem(newItem)
+            hStr = str(key).replace("slice","").replace(" ","")
+            newItem.histStr = self.histStr + hStr
             for ene in newKeys:
                 newItem[ene] = self[ene]
             return newItem 

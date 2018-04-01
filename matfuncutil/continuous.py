@@ -3,11 +3,13 @@ try:
 except:
     pass
 from discrete import *
+import pynumutil as nu
 
 class cBase:
     def __init__(self, funPtr, units=None):
         self.funPtr = funPtr
         self.units = units
+        self.histStr = ""
 
     def __call__(self, val):
         return self.funPtr(val)
@@ -20,6 +22,9 @@ class cBase:
 
     def discretise(self, startVal, endVal, numPoints):
         dcont = self._getDiscreteContainer()
+        hStr = "("+nu.sciStr(startVal)+","+nu.sciStr(endVal)
+        hStr += ","+str(numPoints)+")"
+        dcont.histStr = self.histStr + hStr
         sz = (endVal-startVal) / (numPoints-1)
         for i in range(numPoints):
             val = startVal +  sz*i
