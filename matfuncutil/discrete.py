@@ -20,6 +20,11 @@ class dBase(dict, object):
         self.sigFigs = 6
         self.histStr = ""
 
+    def getHistStr(self):
+        if self.histStr == "":
+            return "origin"
+        return self.histStr
+
     def isContinuous(self):
         return False
 

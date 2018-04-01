@@ -11,6 +11,11 @@ class cBase:
         self.units = units
         self.histStr = ""
 
+    def getHistStr(self):
+        if self.histStr == "":
+            return "origin"
+        return self.histStr
+
     def __call__(self, val):
         return self.funPtr(val)
 
