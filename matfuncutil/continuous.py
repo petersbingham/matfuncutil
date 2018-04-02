@@ -6,10 +6,14 @@ from discrete import *
 import pynumutil as nu
 
 class cBase:
-    def __init__(self, funPtr, units=None):
+    def __init__(self, funPtr, units=None, sourceStr=""):
         self.funPtr = funPtr
         self.units = units
+        self.sourceStr = sourceStr
         self.histStr = ""
+
+    def getSourceStr(self):
+        return self.sourceStr
 
     def getHistStr(self):
         if self.histStr == "":
@@ -27,6 +31,7 @@ class cBase:
 
     def discretise(self, startVal, endVal, numPoints):
         dcont = self._getDiscreteContainer()
+        dcont.sourceStr = self.sourceStr
         hStr = "("+nu.sciStr(startVal)+","+nu.sciStr(endVal)
         hStr += ","+str(numPoints)+")"
         dcont.histStr = self.histStr + hStr
@@ -61,9 +66,9 @@ class cMat(cBase):
         pass
 
 class cPolyVal(cVal):
-    def __init__(self, symVal, symVar, units=None):
+    def __init__(self, symVal, symVar, units=None, sourceStr=""):
         cVal.__init__(self, lambda val: nw.fromSympy(symVal.subs(symVar, val)),
-                       units)
+                       units, sourceStr)
         self.symVal = symVal
         self.symVar = symVar
 
@@ -79,10 +84,10 @@ class cPolyVal(cVal):
         return nw.rootsSym(poly)
 
 class cPolyMat(cMat):
-    def __init__(self, symMat, symVar, units=None):
+    def __init__(self, symMat, symVar, units=None, sourceStr=""):
         cMat.__init__(self,
                        lambda val: nw.fromSympyMatrix(symMat.subs(symVar, val)),
-                       units)
+                       units, sourceStr)
         self.symMat = symMat
         self.symVar = symVar
 

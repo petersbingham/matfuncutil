@@ -6,7 +6,7 @@ import random
 import pynumwrap as nw
 
 class dBase(dict, object):
-    def __init__(self, d={}, units=None):
+    def __init__(self, d={}, units=None, sourceStr=""):
         dict.__init__(self, d)
         self.units = units
         
@@ -18,7 +18,11 @@ class dBase(dict, object):
         self.ysize = None
         
         self.sigFigs = 6
+        self.sourceStr = sourceStr
         self.histStr = ""
+
+    def getSourceStr(self):
+        return self.sourceStr
 
     def getHistStr(self):
         if self.histStr == "":
@@ -188,7 +192,9 @@ class dBase(dict, object):
             units = self.units
         if newType is None:
             newType = type(self)
-        return newType(units=units)
+        newItem = newType(units=units, sourceStr="")
+        newItem.sourceStr = self.sourceStr
+        return newItem
 
 
 class dVal(dBase):
