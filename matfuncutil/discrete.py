@@ -108,14 +108,14 @@ class dBase(dict, object):
     def __str__(self):
         string = ""
         fstr = '%.'+str(self.sigFigs)+'E'
-        for ene in self.sortedKeys():
-            if ene.imag == 0.:
-                eneStr = fstr % ene.real
-            elif ene.imag < 0:
-                eneStr = fstr % ene.real + fstr % ene.imag+"i"
+        for val in self.sortedKeys():
+            if val.imag == 0.:
+                valStr = fstr % val.real
+            elif val.imag < 0:
+                valStr = fstr % val.real + fstr % val.imag+"i"
             else:
-                eneStr = fstr % ene.real + "+" + fstr % ene.imag+"i"
-            string += eneStr + ":\n" + str(self[ene]) + "\n\n"
+                valStr = fstr % val.real + "+" + fstr % val.imag+"i"
+            string += valStr + ":\n" + str(self[val]) + "\n\n"
         return string
 
     #TODO Ability to append additional objects to combine in one plot.
