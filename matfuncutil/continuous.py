@@ -1,3 +1,4 @@
+import copy
 try:
     import sympy as sym
 except:
@@ -75,12 +76,13 @@ class cPolyVal(cVal):
     def findRoots(self, **kwargs):
         var = sym.symbols(self.symVar)
         poly = sym.polys.Poly(self.symVal, var)
-        if "nw_rootsSym" in kwargs:
-            if "symPoly_nroots" in kwargs["nw_rootsSym"]:
-                if "n" in kwargs["nw_rootsSym"]["symPoly_nroots"] and \
-                kwargs["nw_rootsSym"]["symPoly_nroots"]["n"]=="dps":
-                    kwargs["nw_rootsSym"]["symPoly_nroots"]["n"] = nw.dps
-            return nw.rootsSym(poly, **kwargs["nw_rootsSym"])
+        kwargsCopy = copy.deepcopy(kwargs) # Copy because we may change
+        if "nw_rootsSym" in kwargsCopy:
+            if "symPoly_nroots" in kwargsCopy["nw_rootsSym"]:
+                if "n" in kwargsCopy["nw_rootsSym"]["symPoly_nroots"] and \
+                kwargsCopy["nw_rootsSym"]["symPoly_nroots"]["n"]=="dps":
+                    kwargsCopy["nw_rootsSym"]["symPoly_nroots"]["n"] = nw.dps
+            return nw.rootsSym(poly, **kwargsCopy["nw_rootsSym"])
         return nw.rootsSym(poly)
 
 class cPolyMat(cMat):
