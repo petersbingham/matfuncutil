@@ -21,14 +21,6 @@ class dBase(dict, object):
         self.sourceStr = sourceStr
         self.histStr = ""
 
-    def getSourceStr(self):
-        return self.sourceStr
-
-    def getHistStr(self):
-        if self.histStr == "":
-            return "origin"
-        return self.histStr
-
     def isContinuous(self):
         return False
 
@@ -117,6 +109,32 @@ class dBase(dict, object):
                 valStr = fstr % val.real + "+" + fstr % val.imag+"i"
             string += valStr + ":\n" + str(self[val]) + "\n\n"
         return string
+
+    def getSourceStr(self):
+        return self.sourceStr
+
+    def getHistStr(self):
+        if self.histStr == "":
+            return "origin"
+        return self.histStr
+
+    def getCheckStr(self):
+        keys = self.sortedKeys()
+        ret = "Len: " + str(len(keys)) + "\n"
+        if len(keys) > 2:
+            mi = len(keys) / 2
+            ret += self._getKeyValCheckStr(keys,0)
+            ret += "\n" + self._getKeyValCheckStr(keys,mi)
+            ret += "\n" + self._getKeyValCheckStr(keys,-1)
+        elif len(keys) == 2:
+            ret += self._getKeyValCheckStr(keys,0)
+            ret += "\n" + self._getKeyValCheckStr(keys,-1)
+        elif len(keys) == 1:
+            ret += self._getKeyValCheckStr(keys,0)
+        return ret
+
+    def _getKeyValCheckStr(self, keys, i):
+        return str(keys[i]) + ":\n" + str(self[keys[i]])
 
     #TODO Ability to append additional objects to combine in one plot.
     def plot(self, logx=False, logy=False, imag=False, show=True, 
