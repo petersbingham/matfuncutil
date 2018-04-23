@@ -7,28 +7,22 @@ from discrete import *
 import pynumutil as nu
 
 class cBase:
-    def __init__(self, funPtr, units=None, sourceStr=""):
+    def __init__(self, funPtr, units=None, sourceStr="", histStr="", 
+                 chartTitle=""):
         self.funPtr = funPtr
         self.units = units
         self.sourceStr = sourceStr
-        self.histStr = ""
-
-    def getSourceStr(self):
-        return self.sourceStr
-
-    def getHistStr(self):
-        if self.histStr == "":
-            return "origin"
-        return self.histStr
-
-    def __call__(self, val):
-        return self.funPtr(val)
+        self.histStr = histStr
+        self.chartTitle = chartTitle
 
     def isContinuous(self):
         return True
 
     def isDiscrete(self):
         return False
+
+    def __call__(self, val):
+        return self.funPtr(val)
 
     def discretise(self, startVal, endVal, numPoints):
         dcont = self._getDiscreteContainer()
@@ -44,6 +38,29 @@ class cBase:
 
     def _getDiscreteContainer(self):
         raise NotImplementedError
+
+    def getSourceStr(self):
+        return self.sourceStr
+
+    def setSourceStr(self, sourceStr):
+        return self.sourceStr = sourceStr
+
+    def getHistStr(self):
+        if self.histStr == "":
+            return "origin"
+        return self.histStr
+
+    def appendHistStr(self, histStr):
+        if len(self.histStr) == 0:
+            self.histStr = histStr
+        else:
+            self.histStr += "," + histStr
+
+    def getCheckStr(self):
+        return self.getHistStr()
+
+    def setChartTitle(self, chartTitle):
+        self.chartTitle = chartTitle
 
 class cVal(cBase):
     def _getDiscreteContainer(self):

@@ -27,25 +27,6 @@ class dBase(dict, object):
     def isDiscrete(self):
         return True
 
-    def setChartTitle(self, chartTitle):
-        self.chartTitle = chartTitle
-
-    def setChartParameters(self, colourCycle=None, legPrefix=None, useMarker=None, 
-                           xsize=None, ysize=None):
-        if colourCycle is not None:
-            self.colourCycle = colourCycle
-        if legPrefix is not None:
-            self.legPrefix = legPrefix
-        if useMarker is not None:
-            self.useMarker = useMarker
-        if xsize is not None:
-            self.xsize = xsize
-        if ysize is not None:
-            self.ysize = ysize
-
-    def setPrintParameters(self, sigFigs):
-        self.sigFigs = sigFigs
-
     def sortedKeys(self):
         return sorted(self.keys(),key=lambda x: x.real)
 
@@ -132,6 +113,28 @@ class dBase(dict, object):
         elif len(keys) == 1:
             ret += self._getKeyValCheckStr(keys,0)
         return ret
+
+    def setChartTitle(self, chartTitle):
+        self.chartTitle = chartTitle
+
+    def getChartTitle(self):
+        return self.chartTitle
+
+    def setChartParameters(self, colourCycle=None, legPrefix=None, useMarker=None, 
+                           xsize=None, ysize=None):
+        if colourCycle is not None:
+            self.colourCycle = colourCycle
+        if legPrefix is not None:
+            self.legPrefix = legPrefix
+        if useMarker is not None:
+            self.useMarker = useMarker
+        if xsize is not None:
+            self.xsize = xsize
+        if ysize is not None:
+            self.ysize = ysize
+
+    def setPrintParameters(self, sigFigs):
+        self.sigFigs = sigFigs
 
     def _getKeyValCheckStr(self, keys, i):
         return str(keys[i]) + ":\n" + str(self[keys[i]])
