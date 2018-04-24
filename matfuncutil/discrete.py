@@ -153,6 +153,7 @@ class dBase(dict, object):
         ls,ss = self.getPlotInfo(logx, logy, imag)
         if ss is not None:
             plt.legend(ls, ss)
+        plt.xlabel(self.units, fontsize=12)
         return plt
 
     def getPlotInfo(self, logx=False, logy=False, imag=False):
