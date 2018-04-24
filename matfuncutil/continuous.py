@@ -43,7 +43,7 @@ class cBase:
         return self.sourceStr
 
     def setSourceStr(self, sourceStr):
-        return self.sourceStr = sourceStr
+        self.sourceStr = sourceStr
 
     def getHistStr(self):
         if self.histStr == "":
