@@ -35,6 +35,10 @@ class dBase(dict, object):
         for key in self.sortedKeys():
             sortedQuantities.append(self[key])
         return sortedQuantities
+    
+    def getRange(self):
+        keys = self.sortedKeys()
+        return (keys[0], keys[-1])
 
     #TODO __setitem__ to perform type checks and update histStr
 
@@ -54,7 +58,12 @@ class dBase(dict, object):
         else:
             return dict.__getitem__(self, key)
 
-    def getSliceIndices(self, start, end, numPoints, fromEnd=False):
+    def getSliceIndices(self, start=None, end=None, numPoints=None, 
+                        fromEnd=False):
+        if start is None:
+            start = 0
+        if end is None:
+            end = len(self) - 1    
         if isinstance(start, float):
             start = self._getNearestIndex(start)
         if isinstance(end, float):
@@ -74,7 +83,8 @@ class dBase(dict, object):
         return (actStartIndex,actEndIndex+1,step),\
                (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
 
-    def createReducedLength(self, start, end, numPoints, fromEnd=False):
+    def createReducedLength(self, start=None, end=None, numPoints=None, 
+                            fromEnd=False):
         si = self.getSliceIndices(start, end, numPoints, fromEnd)[0]
         return self[si[0]:si[1]:si[2]]
 
@@ -139,7 +149,6 @@ class dBase(dict, object):
     def _getKeyValCheckStr(self, keys, i):
         return str(keys[i]) + ":\n" + str(self[keys[i]])
 
-    #TODO Ability to append additional objects to combine in one plot.
     def plot(self, logx=False, logy=False, imag=False, show=True, 
              fileName=None):
         p = self._plot(logx, logy, imag)
