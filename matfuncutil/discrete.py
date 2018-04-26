@@ -11,7 +11,7 @@ class dBase(dict, object):
         self.units = units
         
         self.chartTitle = ""
-        self.colourCycle = ['red', 'green', 'blue', 'purple']
+        self.colourCycle = ['green', 'blue', 'purple', 'red']
         self.legPrefix = ""
         self.useMarker = False
         self.xsize = None
@@ -84,9 +84,13 @@ class dBase(dict, object):
                (self.sortedKeys()[actStartIndex],self.sortedKeys()[actEndIndex])
 
     def createReducedLength(self, start=None, end=None, numPoints=None, 
-                            fromEnd=False):
+                            fromEnd=False, forceEnd=False):
         si = self.getSliceIndices(start, end, numPoints, fromEnd)[0]
-        return self[si[0]:si[1]:si[2]]
+        ret = self[si[0]:si[1]:si[2]]
+        if forceEnd:
+            kvp = self[-1]
+            ret[kvp[0]] = kvp[1] 
+        return ret
 
     def __str__(self):
         string = ""
@@ -170,7 +174,7 @@ class dBase(dict, object):
         return (ls, ss)
 
     def _initPlot(self):
-        fig = plt.figure()
+        fig = plt.figure(facecolor="white")
         fig.suptitle(self.chartTitle)
         if self.xsize is not None and self.ysize is not None:
             fig.set_size_inches(self.xsize, self.ysize, forward=True)
