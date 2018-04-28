@@ -162,7 +162,7 @@ class dBase(dict, object):
             p.show()
 
     def _plot(self, logx=False, logy=False, imag=False):
-        self._initPlot()
+        self._initPlot(imag)
         ls,ss = self.getPlotInfo(logx, logy, imag)
         if ss is not None:
             plt.legend(ls, ss)
@@ -173,9 +173,12 @@ class dBase(dict, object):
         ls,ss = self._getPlotInfo(logx, logy, imag)
         return (ls, ss)
 
-    def _initPlot(self):
+    def _initPlot(self, imag):
         fig = plt.figure(facecolor="white")
-        fig.suptitle(self.chartTitle)
+        if not imag:
+            fig.suptitle(self.chartTitle)
+        else:
+            fig.suptitle(self.chartTitle + " imag")
         if self.xsize is not None and self.ysize is not None:
             fig.set_size_inches(self.xsize, self.ysize, forward=True)
         plt.gca().set_prop_cycle(cycler('color', self.colourCycle))
@@ -252,7 +255,7 @@ class dVec(dBase):
     def createReducedDim(self, n):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
-        newItem.setChartTitle(self.chartTitle)
+        newItem.setChartTitle(self.chartTitle + ", j="+str(n+1))
         for k,v in self.iteritems():
             newItem[k] = v[n]
         return newItem
@@ -292,7 +295,7 @@ class dMat(dBase):
     def createReducedDim(self, m, isCol=False):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
-        newItem.setChartTitle(self.chartTitle)
+        newItem.setChartTitle(self.chartTitle + ", i="+str(m+1))
         for k,v in self.iteritems():
             newItem[k] = nw.getVector(v,m,isCol)
         return newItem
