@@ -33,7 +33,7 @@ class cBase:
         sz = (endVal-startVal) / (numPoints-1)
         for i in range(numPoints):
             val = startVal +  sz*i
-            dcont[val] = self(val)
+            dcont[val] = self.funPtr
         return dcont
 
     def _getDiscreteContainer(self):

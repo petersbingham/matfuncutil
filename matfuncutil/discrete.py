@@ -45,7 +45,7 @@ class dBase(dict, object):
     def __getitem__(self, key):
         if isinstance(key, (int, long)):
             key = self.sortedKeys()[key]
-            return (key, dict.__getitem__(self, key))
+            return (key, self._getVal(key))
         elif isinstance(key, slice):
             newKeys = self.sortedKeys()[key]
             newItem = self._createNewItem()
@@ -56,7 +56,16 @@ class dBase(dict, object):
                 newItem[ene] = self[ene]
             return newItem 
         else:
-            return dict.__getitem__(self, key)
+            return self._getVal(key)
+
+    def _getVal(self, key):
+        val = dict.__getitem__(self, key)
+        try:
+            val = val(key)
+            self[key] = val
+        except TypeError:
+            pass
+        return val
 
     def getSliceIndices(self, start=None, end=None, numPoints=None, 
                         fromEnd=False):
