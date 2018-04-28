@@ -30,11 +30,17 @@ class dBase(dict, object):
     def sortedKeys(self):
         return sorted(self.keys(),key=lambda x: x.real)
 
+    def values(self):
+        vals = []
+        for key in self.keys():
+            vals.append(self[key])
+        return vals
+
     def sortedValues(self):
-        sortedQuantities = []
+        sortedVals = []
         for key in self.sortedKeys():
-            sortedQuantities.append(self[key])
-        return sortedQuantities
+            sortedVals.append(self[key])
+        return sortedVals
     
     def getRange(self):
         keys = self.sortedKeys()
