@@ -267,28 +267,28 @@ class dVal(dBase):
 
 
 class dVec(dBase):
-    def createReducedDim(self, n):
+    def createReducedDim(self, j):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
-        newItem.setChartTitle(self.chartTitle + ", j="+str(n+1))
+        newItem.setChartTitle(self.chartTitle + ", n="+str(j+1))
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = val[n]
+            newItem[key] = val[j]
         return newItem
 
     def _getPlotNums(self, imag):
         xss = []
         yss = []
         size = self._getSize()
-        for n in range(size):
+        for j in range(size):
             xs = np.ndarray((len(self),), dtype=float)
             ys = np.ndarray((len(self),), dtype=float)
-            for i,ene in enumerate(self.sortedKeys()):
-                xs[i] = ene.real
+            for key,ene in enumerate(self.sortedKeys()):
+                xs[key] = ene.real
                 if not imag:
-                    ys[i] = self[i][1][n].real
+                    ys[key] = self[key][1][j].real
                 else:
-                    ys[i] = self[i][1][n].imag
+                    ys[key] = self[key][1][j].imag
             xss.append(xs)
             yss.append(ys)
         return xss, yss
@@ -296,8 +296,8 @@ class dVec(dBase):
     def _getPlotLegends(self):
         legStrs = []
         size = self._getSize()
-        for n in range(size):
-            legStrs.append(self.legPrefix + ": "+str(n))
+        for j in range(size):
+            legStrs.append(self.legPrefix + ": "+str(j+1))
         return legStrs
 
     def _getSize(self):
@@ -308,13 +308,13 @@ class dVec(dBase):
         return dVal(units=self.units)
 
 class dMat(dBase):
-    def createReducedDim(self, m, isCol=False):
+    def createReducedDim(self, i, isCol=False):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
-        newItem.setChartTitle(self.chartTitle + ", i="+str(m+1))
+        newItem.setChartTitle(self.chartTitle + ", m="+str(i+1))
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = nw.getVector(val,m,isCol)
+            newItem[key] = nw.getVector(val,i,isCol)
         return newItem
 
     def trace(self):
@@ -351,16 +351,16 @@ class dMat(dBase):
         xss = []
         yss = []
         size = self._getSize()
-        for m in range(size):
-            for n in range(size):
+        for i in range(size):
+            for j in range(size):
                 xs = np.ndarray((len(self),), dtype=float)
                 ys = np.ndarray((len(self),), dtype=float)
-                for i,ene in enumerate(self.sortedKeys()):
-                    xs[i] = self[i][0].real
+                for key,ene in enumerate(self.sortedKeys()):
+                    xs[key] = self[key][0].real
                     if not imag:
-                        ys[i] = self[i][1][m,n].real
+                        ys[key] = self[key][1][i,j].real
                     else:
-                        ys[i] = self[i][1][m,n].imag
+                        ys[key] = self[key][1][i,j].imag
                 xss.append(xs)
                 yss.append(ys)
         return xss, yss
@@ -368,9 +368,9 @@ class dMat(dBase):
     def _getPlotLegends(self):
         legStrs = []
         size = self._getSize()
-        for m in range(size):
-            for n in range(size):
-                legStrs.append(self.legPrefix + ": "+str(m)+","+str(n))
+        for i in range(size):
+            for j in range(size):
+                legStrs.append(self.legPrefix + ": "+str(i+1)+","+str(j+1))
         return legStrs
 
     def _getSize(self):
