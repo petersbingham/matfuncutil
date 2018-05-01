@@ -271,8 +271,9 @@ class dVec(dBase):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
         newItem.setChartTitle(self.chartTitle + ", j="+str(n+1))
-        for k,v in self.iteritems():
-            newItem[k] = v[n]
+        for key in self:
+            val = self[key] # force fun eval if relevant
+            newItem[key] = val[n]
         return newItem
 
     def _getPlotNums(self, imag):
@@ -311,34 +312,38 @@ class dMat(dBase):
         newItem = self._getReductionContainer()
         self._initNewItem(newItem)
         newItem.setChartTitle(self.chartTitle + ", i="+str(m+1))
-        for k,v in self.iteritems():
-            newItem[k] = nw.getVector(v,m,isCol)
+        for key in self:
+            val = self[key] # force fun eval if relevant
+            newItem[key] = nw.getVector(val,m,isCol)
         return newItem
 
     def trace(self):
         newItem = dVal(units=self.units)
         self._initNewItem(newItem)
-        for k,v in self.iteritems():
-            newItem[k] = nw.trace(v)
+        for key in self:
+            val = self[key] # force fun eval if relevant
+            newItem[key] = nw.trace(val)
         return newItem
 
     def absolute(self):
         newItem = dVal(units=self.units)
         self._initNewItem(newItem)
-        for k,v in self.iteritems():
-            newItem[k] = nw.absolute(v)
+        for key in self:
+            val = self[key] # force fun eval if relevant
+            newItem[key] = nw.absolute(val)
         return newItem
 
     def unitaryOp(self):
         newItem = dMat(units=self.units)
         self._initNewItem(newItem)
-        for k,v in self.iteritems():
-            newItem[k] = nw.transpose(nw.conjugate(v))
+        for key in self:
+            val = self[key] # force fun eval if relevant
+            newItem[key] = nw.transpose(nw.conjugate(val))
         return newItem
 
     def isUnitary(self, rtol=1e-05, atol=1e-08):
-        for v in self.values():
-            if not nw.isUnitary(v, rtol, atol):
+        for val in self.values():
+            if not nw.isUnitary(val, rtol, atol):
                 return False
         return True
 
