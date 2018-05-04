@@ -234,9 +234,7 @@ class dBase(dict, object):
             laste = e
         return i
 
-    def _initNewItem(self, item, units=None):
-        if units is None:
-            units = self.units
+    def _initNewItem(self, item):
         item.setChartParameters(self.colourCycle, self.legPrefix, self.useMarker)
         item.setPrintParameters(self.sigFigs)
 
@@ -245,8 +243,7 @@ class dBase(dict, object):
             units = self.units
         if newType is None:
             newType = type(self)
-        newItem = newType(units=units, sourceStr="")
-        newItem.sourceStr = self.sourceStr
+        newItem = newType(units=units, sourceStr=self.sourceStr)
         return newItem
 
 
