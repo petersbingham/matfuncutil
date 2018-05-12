@@ -305,13 +305,13 @@ class dVec(dBase):
         return dVal(units=self.units)
 
 class dMat(dBase):
-    def create_reduced_dim(self, i, isCol=False):
+    def create_reduced_dim(self, i, is_col=False):
         newItem = self._get_reduction_container()
         self._init_new_item(newItem)
         newItem.set_chart_title(self.chart_title + ", m="+str(i+1))
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = nw.get_vector(val,i,isCol)
+            newItem[key] = nw.get_vector(val,i,is_col)
         return newItem
 
     def trace(self):
