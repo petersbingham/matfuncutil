@@ -7,112 +7,112 @@ from discrete import *
 import pynumutil as nu
 
 class cBase:
-    def __init__(self, funPtr, units=None, sourceStr="", histStr="", 
-                 chartTitle=""):
-        self.funPtr = funPtr
+    def __init__(self, fun_ref, units=None, source_str="", hist_str="", 
+                 chart_title=""):
+        self.fun_ref = fun_ref
         self.units = units
-        self.sourceStr = sourceStr
-        self.histStr = histStr
-        self.chartTitle = chartTitle
+        self.source_str = source_str
+        self.hist_str = hist_str
+        self.chart_title = chart_title
 
-    def isContinuous(self):
+    def is_continuous(self):
         return True
 
-    def isDiscrete(self):
+    def is_discrete(self):
         return False
 
     def __call__(self, val):
-        return self.funPtr(val)
+        return self.fun_ref(val)
 
-    def discretise(self, startVal, endVal, numPoints):
-        dcont = self._getDiscreteContainer()
-        dcont.sourceStr = self.sourceStr
-        hStr = "("+nu.sciStr(startVal)+","+nu.sciStr(endVal)
-        hStr += ","+str(numPoints)+")"
-        dcont.histStr = self.histStr + hStr
-        sz = (endVal-startVal) / (numPoints-1)
-        for i in range(numPoints):
-            val = startVal +  sz*i
-            dcont[val] = self.funPtr
+    def discretise(self, start_val, end_val, num_points):
+        dcont = self._get_discrete_container()
+        dcont.source_str = self.source_str
+        hStr = "("+nu.sci_str(start_val)+","+nu.sci_str(end_val)
+        hStr += ","+str(num_points)+")"
+        dcont.hist_str = self.hist_str + hStr
+        sz = (end_val-start_val) / (num_points-1)
+        for i in range(num_points):
+            val = start_val +  sz*i
+            dcont[val] = self.fun_ref
         return dcont
 
-    def _getDiscreteContainer(self):
+    def _get_discrete_container(self):
         raise NotImplementedError
 
-    def getSourceStr(self):
-        return self.sourceStr
+    def get_source_str(self):
+        return self.source_str
 
-    def setSourceStr(self, sourceStr):
-        self.sourceStr = sourceStr
+    def set_source_str(self, source_str):
+        self.source_str = source_str
 
-    def getHistStr(self):
-        if self.histStr == "":
+    def get_hist_str(self):
+        if self.hist_str == "":
             return "origin"
-        return self.histStr
+        return self.hist_str
 
-    def appendHistStr(self, histStr):
-        if len(self.histStr) == 0:
-            self.histStr = histStr
+    def append_hist_str(self, hist_str):
+        if len(self.hist_str) == 0:
+            self.hist_str = hist_str
         else:
-            self.histStr += "," + histStr
+            self.hist_str += "," + hist_str
 
-    def getCheckStr(self):
-        return self.getHistStr()
+    def get_check_str(self):
+        return self.get_hist_str()
 
-    def setChartTitle(self, chartTitle):
-        self.chartTitle = chartTitle
+    def set_chart_title(self, chart_title):
+        self.chart_title = chart_title
 
 class cVal(cBase):
-    def _getDiscreteContainer(self):
+    def _get_discrete_container(self):
         return dVal(units=self.units)
 
-    def findRoots(self):
+    def find_roots(self):
         # TODO add generic root finder (eg pydelves)
         pass
 
 class cVec(cBase):
-    def _getDiscreteContainer(self):
+    def _get_discrete_container(self):
         return dVec(units=self.units)
 
 class cMat(cBase):
-    def _getDiscreteContainer(self):
+    def _get_discrete_container(self):
         return dMat(units=self.units)
 
     def determinant(self):
-        # TODO Return a cVal that will evaluate self.funPtr and then find the
+        # TODO Return a cVal that will evaluate self.fun_ref and then find the
         # determiant automatically
         pass
 
 class cPolyVal(cVal):
-    def __init__(self, symVal, symVar, units=None, sourceStr=""):
-        cVal.__init__(self, lambda val: nw.fromSympy(symVal.subs(symVar, val)),
-                       units, sourceStr)
-        self.symVal = symVal
-        self.symVar = symVar
+    def __init__(self, sym_val, sym_var, units=None, source_str=""):
+        cVal.__init__(self, lambda val: nw.from_sympy(sym_val.subs(sym_var, val)),
+                      units, source_str)
+        self.sym_val = sym_val
+        self.sym_var = sym_var
 
-    def findRoots(self, **kwargs):
-        var = sym.symbols(self.symVar)
-        poly = sym.polys.Poly(self.symVal, var)
+    def find_roots(self, **kwargs):
+        var = sym.symbols(self.sym_var)
+        poly = sym.polys.Poly(self.sym_val, var)
         kwargsCopy = copy.deepcopy(kwargs) # Copy because we may change
-        if "nw_rootsSym" in kwargsCopy:
-            if "symPoly_nroots" in kwargsCopy["nw_rootsSym"]:
-                if "n" in kwargsCopy["nw_rootsSym"]["symPoly_nroots"] and \
-                kwargsCopy["nw_rootsSym"]["symPoly_nroots"]["n"]=="dps":
-                    kwargsCopy["nw_rootsSym"]["symPoly_nroots"]["n"] = nw.dps
-            return nw.rootsSym(poly, **kwargsCopy["nw_rootsSym"])
-        return nw.rootsSym(poly)
+        if "nw_roots_sym" in kwargsCopy:
+            if "symPoly_nroots" in kwargsCopy["nw_roots_sym"]:
+                if "n" in kwargsCopy["nw_roots_sym"]["symPoly_nroots"] and \
+                kwargsCopy["nw_roots_sym"]["symPoly_nroots"]["n"]=="dps":
+                    kwargsCopy["nw_roots_sym"]["symPoly_nroots"]["n"] = nw.dps
+            return nw.roots_sym(poly, **kwargsCopy["nw_roots_sym"])
+        return nw.roots_sym(poly)
 
 class cPolyMat(cMat):
-    def __init__(self, symMat, symVar, units=None, sourceStr=""):
+    def __init__(self, sym_mat, sym_var, units=None, source_str=""):
         cMat.__init__(self,
-                       lambda val: nw.fromSympyMatrix(symMat.subs(symVar, val)),
-                       units, sourceStr)
-        self.symMat = symMat
-        self.symVar = symVar
+                      lambda val: nw.from_sympy_matrix(sym_mat.subs(sym_var, val)),
+                      units, source_str)
+        self.sym_mat = sym_mat
+        self.sym_var = sym_var
 
     def determinant(self, **kwargs):
         if "sym_matrix_det" in kwargs:
-            det = self.symMat.det(**kwargs["sym_matrix_det"])
+            det = self.sym_mat.det(**kwargs["sym_matrix_det"])
         else:
-            det = self.symMat.det()
-        return cPolyVal(det, self.symVar, self.units)
+            det = self.sym_mat.det()
+        return cPolyVal(det, self.sym_var, self.units)

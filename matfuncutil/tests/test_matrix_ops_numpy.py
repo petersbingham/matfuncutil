@@ -8,27 +8,27 @@ import unittest
 
 class test_allUnitary(unittest.TestCase):
     def runTest(self):
-        d = dumMats.twoUnitary()
-        self.assertTrue(d.isUnitary())
+        d = dumMats.two_unitary()
+        self.assertTrue(d.is_unitary())
 
-class test_oneUnitary(unittest.TestCase):
+class test_one_unitary(unittest.TestCase):
     def runTest(self):
-        d = dumMats.oneUnitary()
-        self.assertFalse(d.isUnitary())
+        d = dumMats.one_unitary()
+        self.assertFalse(d.is_unitary())
 
-class test_noneUnitary(unittest.TestCase):
+class test_none_unitary(unittest.TestCase):
     def runTest(self):
-        d = dumMats.noneUnitary()
-        self.assertFalse(d.isUnitary())
+        d = dumMats.none_unitary()
+        self.assertFalse(d.is_unitary())
 
 class test_absolute(unittest.TestCase):
     def runTest(self):
-        d = dumMats.getAbsoluteTest()
+        d = dumMats.get_absolute_test()
         d_abs = d.absolute()
-        self.assertTrue(dumMats.mfc.nw.areMatricesClose(d_abs[1.0],
-                                                        dumMats.getIdentity()))
-        self.assertTrue(dumMats.mfc.nw.areMatricesClose(d_abs[2.0],
-                                                dumMats.getComplex1Absolute()))
+        self.assertTrue(dumMats.mfc.nw.are_matrices_close(d_abs[1.0],
+                                                        dumMats.get_identity()))
+        self.assertTrue(dumMats.mfc.nw.are_matrices_close(d_abs[2.0],
+                                                dumMats.get_complex1_absolute()))
         
 
 if __name__ == "__main__":

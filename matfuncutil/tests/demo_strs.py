@@ -6,17 +6,17 @@ sys.path.insert(0,basedir+'/../..')
 
 import dumMats
 
-d = dumMats.rowOffsetColGain_zeroImag()
+d = dumMats.row_offset_col_gain_zeroimag()
 print str(d)
 
 raw_input("Any key to continue.")
-d = dumMats.rowOffsetColGain_posImag()
+d = dumMats.row_offset_col_gain_posImag()
 print str(d)
 
 raw_input("Any key to continue.")
-d = dumMats.rowOffsetColGain_negImag()
+d = dumMats.row_offset_col_gain_negImag()
 print str(d)
 
 raw_input("Any key to continue.")
-d = dumMats.rowOffsetColGain_posNegImag()
+d = dumMats.row_offset_col_gain_posNegImag()
 print str(d)

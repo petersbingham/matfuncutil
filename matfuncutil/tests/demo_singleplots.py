@@ -5,15 +5,15 @@ sys.path.insert(0,basedir+'/../..')
 
 import dumMats
 
-a = dumMats.rowOffsetColGain_zeroImag()
+a = dumMats.row_offset_col_gain_zeroimag()
 a.plot()
 
-b = a.createReducedDim(0)
-b.setChartTitle("Test title")
+b = a.create_reduced_dim(0)
+b.set_chart_title("Test title")
 b.plot(logx=True, logy=True)
 
-c = b.createReducedDim(1)
-c.setChartParameters(legPrefix="Test", xsize=10, ysize=10)
+c = b.create_reduced_dim(1)
+c.set_chart_parameters(leg_prefix="Test", xsize=10, ysize=10)
 c.plot(imag=True)
 
 d = a.trace()
@@ -24,5 +24,5 @@ cSin = dumMats.mfc.cVal(math.sin)
 dSin = cSin.discretise(-2*math.pi, 2*math.pi, 200)
 dSin.plot()
 
-dSin2 = dSin.createReducedLength(-math.pi, math.pi, 20)
+dSin2 = dSin.create_reduced_length(-math.pi, math.pi, 20)
 dSin2.plot()

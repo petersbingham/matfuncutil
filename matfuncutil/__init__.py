@@ -1,10 +1,10 @@
 from continuous import *
 
-def usePythonTypes(dps=nw.dps_default_python):
-    nw.usePythonTypes(dps)
+def use_python_types(dps=nw.dps_default_python):
+    nw.use_python_types(dps)
 
-def useMpmathTypes(dps=nw.dps_default_mpmath):
-    nw.useMpmathTypes(dps)
+def use_mpmath_types(dps=nw.dps_default_mpmath):
+    nw.use_mpmath_types(dps)
 
-def setTypeMode(mode, dps=None):
-    nw.setTypeMode(mode, dps)
+def set_type_mode(mode, dps=None):
+    nw.set_type_mode(mode, dps)

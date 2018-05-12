@@ -10,19 +10,19 @@ import unittest
 
 class test_history_numpy(unittest.TestCase):
     def runTest(self):
-        mfc.usePythonTypes()
+        mfc.use_python_types()
         cSin = mfc.cVal(math.sin)
         dSin = cSin.discretise(-6., 6., 200)
-        dSin2 = dSin.createReducedLength(10,190,20)
-        self.assertEqual(dSin2.histStr,"(-6e+00,6e+00,200)(10,182,9)")
+        dSin2 = dSin.create_reduced_length(10,190,20)
+        self.assertEqual(dSin2.hist_str,"(-6e+00,6e+00,200)(10,182,9)")
 
 class test_history_mpmath(unittest.TestCase):
     def runTest(self):
-        mfc.useMpmathTypes()
+        mfc.use_mpmath_types()
         cSin = mfc.cVal(math.sin)
         dSin = cSin.discretise(-6., 6., 200)
-        dSin2 = dSin.createReducedLength(10,190,20)
-        self.assertEqual(dSin2.histStr,"(-6e+00,6e+00,200)(10,182,9)")
+        dSin2 = dSin.create_reduced_length(10,190,20)
+        self.assertEqual(dSin2.hist_str,"(-6e+00,6e+00,200)(10,182,9)")
 
 if __name__ == "__main__":
     #Just for debug
