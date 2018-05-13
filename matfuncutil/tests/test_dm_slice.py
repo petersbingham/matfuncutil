@@ -4,20 +4,20 @@ basedir = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0,basedir+'/../..')
 
 import pynumwrap as nw
-import dumMats
+import dum_mats
 
 import unittest
 
 class test_int_element_access(unittest.TestCase):
     def runTest(self):
-        d1 = dumMats.row_offset_col_gain_posNegImag()
+        d1 = dum_mats.row_offset_col_gain_posNegImag()
         self.assertEqual(len(d1),21)
         sorted_keys = d1.sorted_keys()
-        sortedVal = d1.sorted_values()
+        sorted_val = d1.sorted_values()
         for i in range(21):
             kv = d1[i]
             self.assertEqual(kv[0], sorted_keys[i])
-            nw.are_matrices_close(kv[1], sortedVal[i])
+            nw.are_matrices_close(kv[1], sorted_val[i])
 
 
 class slice_test_helper(unittest.TestCase):
@@ -26,58 +26,58 @@ class slice_test_helper(unittest.TestCase):
     def cal_pos_neg_imag_sub_mat(self, i):
         return nw.matrix([[float(i), 2*float(i)], 
                          [10+float(i), 10+2*float(i)]])
-    def check_pos_neg_imag_sub(self, d, sortedVal, i, i_off, val):
-        actKey = float(i_off)-float(i_off)*1j
-        actMat = self.cal_pos_neg_imag_sub_mat(i_off)
-        self.assertEqual(val,actKey)
-        nw.are_matrices_close(sortedVal[i],actMat)
-        nw.are_matrices_close(d[val],actMat)
+    def check_pos_neg_imag_sub(self, d, sorted_val, i, i_off, val):
+        act_key = float(i_off)-float(i_off)*1j
+        act_mat = self.cal_pos_neg_imag_sub_mat(i_off)
+        self.assertEqual(val,act_key)
+        nw.are_matrices_close(sorted_val[i],act_mat)
+        nw.are_matrices_close(d[val],act_mat)
 
 class test_complex_element_access(slice_test_helper):
     def runTest(self):
-        d1 = dumMats.row_offset_col_gain_posNegImag()
+        d1 = dum_mats.row_offset_col_gain_posNegImag()
         sorted_keys = d1.sorted_keys()
-        sortedVal = d1.sorted_values()
+        sorted_val = d1.sorted_values()
         for i,val in enumerate(sorted_keys):
             i_off = i-10
-            self.check_pos_neg_imag_sub(d1, sortedVal, i, i_off, val)
+            self.check_pos_neg_imag_sub(d1, sorted_val, i, i_off, val)
 
 class test_simp_slice(slice_test_helper):
     def runTest(self):
-        d1 = dumMats.row_offset_col_gain_posNegImag()
+        d1 = dum_mats.row_offset_col_gain_posNegImag()
         d2 = d1[1:-1]
         self.assertEqual(len(d2),19)
         sorted_keys = d2.sorted_keys()
-        sortedVal = d2.sorted_values()
+        sorted_val = d2.sorted_values()
         for i,val in enumerate(sorted_keys):
             i_off = i-9
-            self.check_pos_neg_imag_sub(d1, sortedVal, i, i_off, val)
+            self.check_pos_neg_imag_sub(d1, sorted_val, i, i_off, val)
 
 class test_step_slice(slice_test_helper):
     def runTest(self):
-        d1 = dumMats.row_offset_col_gain_posNegImag()
+        d1 = dum_mats.row_offset_col_gain_posNegImag()
         d2 = d1[::2]
         self.assertEqual(len(d2),11)
         sorted_keys = d2.sorted_keys()
-        sortedVal = d2.sorted_values()
+        sorted_val = d2.sorted_values()
         for i,val in enumerate(sorted_keys):
             i_off = i*2-10
-            self.check_pos_neg_imag_sub(d1, sortedVal, i, i_off, val)
+            self.check_pos_neg_imag_sub(d1, sorted_val, i, i_off, val)
 
 class test_step_sliceRange(slice_test_helper):
     def runTest(self):
-        d1 = dumMats.row_offset_col_gain_posNegImag()
+        d1 = dum_mats.row_offset_col_gain_posNegImag()
         d2 = d1[1:-1:2]
         self.assertEqual(len(d2),10)
         sorted_keys = d2.sorted_keys()
-        sortedVal = d2.sorted_values()
+        sorted_val = d2.sorted_values()
         for i,val in enumerate(sorted_keys):
             i_off = i*2-9
-            self.check_pos_neg_imag_sub(d1, sortedVal, i, i_off, val)
+            self.check_pos_neg_imag_sub(d1, sorted_val, i, i_off, val)
         
 class test_get_slice_indices(slice_test_helper):
     def runTest(self):
-        d1 = dumMats.row_offset_col_gain_posNegImag()
+        d1 = dum_mats.row_offset_col_gain_posNegImag()
 
         ret = d1.get_slice_indices(0,20,3)
         self.assertEqual(ret[0],(0,21,10))
@@ -116,7 +116,7 @@ class test_get_slice_indices(slice_test_helper):
         
 class test_calculate_reduction_indices_from_end(slice_test_helper):
     def runTest(self):
-        d1 = dumMats.row_offset_col_gain_posNegImag()
+        d1 = dum_mats.row_offset_col_gain_posNegImag()
 
         ret = d1.get_slice_indices(0,20,3,True)
         self.assertEqual(ret[0],(0,21,10))

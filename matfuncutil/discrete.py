@@ -37,10 +37,10 @@ class dBase(dict, object):
         return vals
 
     def sorted_values(self):
-        sortedVals = []
+        sorted_vals = []
         for key in self.sorted_keys():
-            sortedVals.append(self[key])
-        return sortedVals
+            sorted_vals.append(self[key])
+        return sorted_vals
     
     def get_range(self):
         keys = self.sorted_keys()
@@ -53,14 +53,14 @@ class dBase(dict, object):
             key = self.sorted_keys()[key]
             return (key, self._get_val(key))
         elif isinstance(key, slice):
-            newKeys = self.sorted_keys()[key]
-            newItem = self._create_new_item()
-            self._init_new_item(newItem)
+            new_keys = self.sorted_keys()[key]
+            new_item = self._create_new_item()
+            self._init_new_item(new_item)
             hStr = str(key).replace("slice","").replace(" ","")
-            newItem.hist_str = self.hist_str + hStr
-            for ene in newKeys:
-                newItem[ene] = self[ene]
-            return newItem 
+            new_item.hist_str = self.hist_str + hStr
+            for ene in new_keys:
+                new_item[ene] = self[ene]
+            return new_item 
         else:
             return self._get_val(key)
 
@@ -89,14 +89,14 @@ class dBase(dict, object):
 
         step = int((end-start) /(num_points-1))
         if from_end:
-            actStartIndex = start+(end-start) - (num_points-1)*step
-            actEndIndex = end
+            act_start_index = start+(end-start) - (num_points-1)*step
+            act_end_index = end
         else:
-            actStartIndex = start
-            actEndIndex = start+(num_points-1)*step
+            act_start_index = start
+            act_end_index = start+(num_points-1)*step
 
-        return (actStartIndex,actEndIndex+1,step),\
-               (self.sorted_keys()[actStartIndex],self.sorted_keys()[actEndIndex])
+        return (act_start_index,act_end_index+1,step),\
+               (self.sorted_keys()[act_start_index],self.sorted_keys()[act_end_index])
 
     def create_reduced_length(self, start=None, end=None, num_points=None, 
                               from_end=False, force_end=False):
@@ -112,12 +112,12 @@ class dBase(dict, object):
         fstr = '%.'+str(self.sig_figs)+'E'
         for val in self.sorted_keys():
             if val.imag == 0.:
-                valStr = fstr % val.real
+                valstr = fstr % val.real
             elif val.imag < 0:
-                valStr = fstr % val.real + fstr % val.imag+"i"
+                valstr = fstr % val.real + fstr % val.imag+"i"
             else:
-                valStr = fstr % val.real + "+" + fstr % val.imag+"i"
-            string += valStr + ":\n" + str(self[val]) + "\n\n"
+                valstr = fstr % val.real + "+" + fstr % val.imag+"i"
+            string += valstr + ":\n" + str(self[val]) + "\n\n"
         return string
 
     def get_source_str(self):
@@ -243,8 +243,8 @@ class dBase(dict, object):
             units = self.units
         if newType is None:
             newType = type(self)
-        newItem = newType(units=units, source_str=self.source_str)
-        return newItem
+        new_item = newType(units=units, source_str=self.source_str)
+        return new_item
 
 
 class dVal(dBase):
@@ -265,13 +265,13 @@ class dVal(dBase):
 
 class dVec(dBase):
     def create_reduced_dim(self, j):
-        newItem = self._get_reduction_container()
-        self._init_new_item(newItem)
-        newItem.set_chart_title(self.chart_title + ", n="+str(j+1))
+        new_item = self._get_reduction_container()
+        self._init_new_item(new_item)
+        new_item.set_chart_title(self.chart_title + ", n="+str(j+1))
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = val[j]
-        return newItem
+            new_item[key] = val[j]
+        return new_item
 
     def _get_plot_nums(self, imag):
         xss = []
@@ -291,11 +291,11 @@ class dVec(dBase):
         return xss, yss
 
     def _get_plot_legends(self):
-        legStrs = []
+        leg_strs = []
         size = self._get_size()
         for j in range(size):
-            legStrs.append(self.leg_prefix + ": "+str(j+1))
-        return legStrs
+            leg_strs.append(self.leg_prefix + ": "+str(j+1))
+        return leg_strs
 
     def _get_size(self):
         key = random.choice(self.keys())
@@ -306,37 +306,37 @@ class dVec(dBase):
 
 class dMat(dBase):
     def create_reduced_dim(self, i, is_col=False):
-        newItem = self._get_reduction_container()
-        self._init_new_item(newItem)
-        newItem.set_chart_title(self.chart_title + ", m="+str(i+1))
+        new_item = self._get_reduction_container()
+        self._init_new_item(new_item)
+        new_item.set_chart_title(self.chart_title + ", m="+str(i+1))
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = nw.get_vector(val,i,is_col)
-        return newItem
+            new_item[key] = nw.get_vector(val,i,is_col)
+        return new_item
 
     def trace(self):
-        newItem = dVal(units=self.units)
-        self._init_new_item(newItem)
+        new_item = dVal(units=self.units)
+        self._init_new_item(new_item)
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = nw.trace(val)
-        return newItem
+            new_item[key] = nw.trace(val)
+        return new_item
 
     def absolute(self):
-        newItem = dVal(units=self.units)
-        self._init_new_item(newItem)
+        new_item = dVal(units=self.units)
+        self._init_new_item(new_item)
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = nw.absolute(val)
-        return newItem
+            new_item[key] = nw.absolute(val)
+        return new_item
 
     def unitary_op(self):
-        newItem = dMat(units=self.units)
-        self._init_new_item(newItem)
+        new_item = dMat(units=self.units)
+        self._init_new_item(new_item)
         for key in self:
             val = self[key] # force fun eval if relevant
-            newItem[key] = nw.transpose(nw.conjugate(val))
-        return newItem
+            new_item[key] = nw.transpose(nw.conjugate(val))
+        return new_item
 
     def is_unitary(self, rtol=1e-05, atol=1e-08):
         for val in self.values():
@@ -363,12 +363,12 @@ class dMat(dBase):
         return xss, yss
 
     def _get_plot_legends(self):
-        legStrs = []
+        leg_strs = []
         size = self._get_size()
         for i in range(size):
             for j in range(size):
-                legStrs.append(self.leg_prefix + ": "+str(i+1)+","+str(j+1))
-        return legStrs
+                leg_strs.append(self.leg_prefix + ": "+str(i+1)+","+str(j+1))
+        return leg_strs
 
     def _get_size(self):
         key = random.choice(self.keys())

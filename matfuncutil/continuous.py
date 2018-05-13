@@ -93,13 +93,13 @@ class cPolyVal(cVal):
     def find_roots(self, **kwargs):
         var = sym.symbols(self.sym_var)
         poly = sym.polys.Poly(self.sym_val, var)
-        kwargsCopy = copy.deepcopy(kwargs) # Copy because we may change
-        if "nw_roots_sym" in kwargsCopy:
-            if "symPoly_nroots" in kwargsCopy["nw_roots_sym"]:
-                if "n" in kwargsCopy["nw_roots_sym"]["symPoly_nroots"] and \
-                kwargsCopy["nw_roots_sym"]["symPoly_nroots"]["n"]=="dps":
-                    kwargsCopy["nw_roots_sym"]["symPoly_nroots"]["n"] = nw.dps
-            return nw.roots_sym(poly, **kwargsCopy["nw_roots_sym"])
+        kwargs_copy = copy.deepcopy(kwargs) # Copy because we may change
+        if "nw_roots_sym" in kwargs_copy:
+            if "symPoly_nroots" in kwargs_copy["nw_roots_sym"]:
+                if "n" in kwargs_copy["nw_roots_sym"]["symPoly_nroots"] and \
+                kwargs_copy["nw_roots_sym"]["symPoly_nroots"]["n"]=="dps":
+                    kwargs_copy["nw_roots_sym"]["symPoly_nroots"]["n"] = nw.dps
+            return nw.roots_sym(poly, **kwargs_copy["nw_roots_sym"])
         return nw.roots_sym(poly)
 
 class cPolyMat(cMat):
