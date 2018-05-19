@@ -111,8 +111,12 @@ class cPolyMat(cMat):
         self.sym_var = sym_var
 
     def determinant(self, **kwargs):
+        # This speeds up that calculation. Also for large matrices calculation
+        # never seems to complete within reasonable time:
+        new_mat = nw.apply_fun_to_elements(self.sym_mat,
+                                           lambda i,j,el: sym.poly(el))
         if "sym_matrix_det" in kwargs:
-            det = self.sym_mat.det(**kwargs["sym_matrix_det"])
+            det = new_mat.det(**kwargs["sym_matrix_det"])
         else:
-            det = self.sym_mat.det()
+            det = new_mat.det()
         return cPolyVal(det, self.sym_var, self.units)
