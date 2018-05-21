@@ -238,12 +238,12 @@ class dBase(dict, object):
         item.set_chart_parameters(self.colour_cycle, self.leg_prefix, self.use_marker)
         item.set_print_parameters(self.sig_figs)
 
-    def _create_new_item(self, units=None, newType=None):
+    def _create_new_item(self, units=None, new_type=None):
         if units is None:
             units = self.units
-        if newType is None:
-            newType = type(self)
-        new_item = newType(units=units, source_str=self.source_str)
+        if new_type is None:
+            new_type = type(self)
+        new_item = new_type(units=units, source_str=self.source_str)
         return new_item
 
 
@@ -335,7 +335,7 @@ class dMat(dBase):
         self._init_new_item(new_item)
         for key in self:
             val = self[key] # force fun eval if relevant
-            new_item[key] = nw.transpose(nw.conjugate(val))
+            new_item[key] = nw.unitary_op(val)
         return new_item
 
     def is_unitary(self, rtol=1e-05, atol=1e-08):
