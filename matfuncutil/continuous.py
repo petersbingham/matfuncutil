@@ -62,9 +62,9 @@ class cBase:
     def set_chart_title(self, chart_title):
         self.chart_title = chart_title
 
-class cVal(cBase):
+class cSca(cBase):
     def _get_discrete_container(self):
-        return dVal(units=self.units)
+        return dSca(units=self.units)
 
     def find_roots(self):
         # TODO add generic root finder (eg pydelves)
@@ -79,13 +79,13 @@ class cMat(cBase):
         return dMat(units=self.units)
 
     def determinant(self):
-        # TODO Return a cVal that will evaluate self.fun_ref and then find the
+        # TODO Return a cSca that will evaluate self.fun_ref and then find the
         # determiant automatically
         pass
 
-class cPolyVal(cVal):
+class cSympyPolySca(cSca):
     def __init__(self, sym_val, sym_var, units=None, source_str=""):
-        cVal.__init__(self, lambda val: nw.from_sympy(sym_val.subs(sym_var, val)),
+        cSca.__init__(self, lambda val: nw.from_sympy(sym_val.subs(sym_var, val)),
                       units, source_str)
         self.sym_val = sym_val
         self.sym_var = sym_var
@@ -102,7 +102,7 @@ class cPolyVal(cVal):
             return nw.roots_sym(poly, **kwargs_copy["nw_roots_sym"])
         return nw.roots_sym(poly)
 
-class cPolyMat(cMat):
+class cSympyPolyMat(cMat):
     def __init__(self, sym_mat, sym_var, units=None, source_str=""):
         cMat.__init__(self,
                       lambda val: nw.from_sympy_matrix(sym_mat.subs(sym_var, val)),
@@ -119,4 +119,4 @@ class cPolyMat(cMat):
             det = new_mat.det(**kwargs["sym_matrix_det"])
         else:
             det = new_mat.det()
-        return cPolyVal(det, self.sym_var, self.units)
+        return cSympyPolySca(det, self.sym_var, self.units)

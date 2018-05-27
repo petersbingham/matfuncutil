@@ -11,7 +11,7 @@ import unittest
 class test_history_numpy(unittest.TestCase):
     def runTest(self):
         mfc.use_python_types()
-        csin = mfc.cVal(math.sin)
+        csin = mfc.cSca(math.sin)
         dsin = csin.discretise(-6., 6., 200)
         dsin2 = dsin.create_reduced_length(10,190,20)
         self.assertEqual(dsin2.hist_str,"(-6e+00,6e+00,200)(10,182,9)")
@@ -19,7 +19,7 @@ class test_history_numpy(unittest.TestCase):
 class test_history_mpmath(unittest.TestCase):
     def runTest(self):
         mfc.use_mpmath_types()
-        csin = mfc.cVal(math.sin)
+        csin = mfc.cSca(math.sin)
         dsin = csin.discretise(-6., 6., 200)
         dsin2 = dsin.create_reduced_length(10,190,20)
         self.assertEqual(dsin2.hist_str,"(-6e+00,6e+00,200)(10,182,9)")
