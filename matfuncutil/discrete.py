@@ -6,11 +6,12 @@ import random
 import pynumwrap as nw
 
 class dBase(dict, object):
-    def __init__(self, d={}, units=None, source_str=""):
+    def __init__(self, d={}, units=None, source_str="", hist_str="",
+                 chart_title=""):
         dict.__init__(self, d)
         self.units = units
         
-        self.chart_title = ""
+        self.chart_title = chart_title
         self.colour_cycle = ['green', 'blue', 'purple', 'red']
         self.leg_prefix = ""
         self.use_marker = False
@@ -19,7 +20,7 @@ class dBase(dict, object):
         
         self.sig_figs = 6
         self.source_str = source_str
-        self.hist_str = ""
+        self.hist_str = hist_str
 
     def is_continuous(self):
         return False
@@ -247,7 +248,7 @@ class dBase(dict, object):
         return new_item
 
 
-class dVal(dBase):
+class dSca(dBase):
     def _get_plot_nums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
@@ -302,7 +303,7 @@ class dVec(dBase):
         return nw.shape(self[key])[0]
 
     def _get_reduction_container(self):
-        return dVal(units=self.units)
+        return dSca(units=self.units)
 
 class dMat(dBase):
     def create_reduced_dim(self, i, is_col=False):
@@ -315,7 +316,7 @@ class dMat(dBase):
         return new_item
 
     def trace(self):
-        new_item = dVal(units=self.units)
+        new_item = dSca(units=self.units)
         self._init_new_item(new_item)
         for key in self:
             val = self[key] # force fun eval if relevant
@@ -323,7 +324,7 @@ class dMat(dBase):
         return new_item
 
     def absolute(self):
-        new_item = dVal(units=self.units)
+        new_item = dSca(units=self.units)
         self._init_new_item(new_item)
         for key in self:
             val = self[key] # force fun eval if relevant
