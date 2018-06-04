@@ -7,12 +7,14 @@ import pynumwrap as nw
 
 class dBase(dict, object):
     def __init__(self, d={}, units=None, source_str="", hist_str="",
-                 chart_title=""):
+                 chart_title="", x_plotlbl="", y_plotlbl=""):
         dict.__init__(self, d)
         self.units = units
         
         self.chart_title = chart_title
-        self.colour_cycle = ['green', 'blue', 'purple', 'red']
+        self.x_plotlbl = x_plotlbl
+        self.y_plotlbl = y_plotlbl
+        self.colour_cycle = ['black', 'red', 'green', 'blue']
         self.leg_prefix = ""
         self.use_marker = False
         self.xsize = None
@@ -150,6 +152,10 @@ class dBase(dict, object):
     def get_chart_title(self):
         return self.chart_title
 
+    def set_axis_labels(self, x_plotlbl, y_plotlbl):
+        self.x_plotlbl = x_plotlbl
+        self.y_plotlbl = y_plotlbl
+
     def set_chart_parameters(self, colour_cycle=None, leg_prefix=None,
                              use_marker=None, xsize=None, ysize=None):
         if colour_cycle is not None:
@@ -182,7 +188,14 @@ class dBase(dict, object):
         ls,ss = self.get_plot_info(logx, logy, imag)
         if ss is not None:
             plt.legend(ls, ss)
-        plt.xlabel(self.units, fontsize=12)
+        if self.units is not None:
+            if self.x_plotlbl == "":
+                plt.xlabel(self.units, fontsize=12)
+            else:
+                plt.xlabel(self.x_plotlbl+" ("+self.units+")", fontsize=12)
+        else:
+            plt.xlabel(self.x_plotlbl, fontsize=12)
+        plt.ylabel(self.y_plotlbl, fontsize=12)
         return plt
 
     def get_plot_info(self, logx=False, logy=False, imag=False):
