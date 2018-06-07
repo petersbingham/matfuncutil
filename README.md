@@ -14,7 +14,7 @@ Clone the repository and install with the following commands:
 Third party packages:
  - Matplotlib
 
-Author 
+Author (these will have their own dependencies):
  - pynumwrap https://github.com/petersbingham/pynumwrap
  - pynumutil https://github.com/petersbingham/pynumutil
 
