@@ -43,7 +43,7 @@ Perhaps most usefully the `discretise` function will return a discrete container
 
 Other functionality is currently available to calculate determinants and find roots. When `find_roots` is called the object will either try and determine the roots using polynomial coefficients if available, or use a more general mechanism (TODO) otherwise.
 
-The following illustrates a use case using the [`tisutil` package](https://github.com/petersbingham/tisutil), which is an extension of `matfuncutil`:
+The following illustrates a use case using the [`tisutil`](https://github.com/petersbingham/tisutil) package, which is an extension of `matfuncutil`:
  1. Obtain a `dKmat` container (derived from `dMat`) using the file reading package such as [`rfortmatreader`](https://github.com/petersbingham/ukrmolmatreader).
  2. Trim this to the required size using the `get_slice_indices` function.
  3. Pass this to some fitting routine such as [`parsmat`](https://github.com/petersbingham/parsmat).
