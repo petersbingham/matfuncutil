@@ -15,8 +15,8 @@ Third party packages:
  - Matplotlib
 
 Author (these will have their own dependencies):
- - pynumwrap https://github.com/petersbingham/pynumwrap
- - pynumutil https://github.com/petersbingham/pynumutil
+ - [pynumwrap](https://github.com/petersbingham/pynumwrap)
+ - [pynumutil](https://github.com/petersbingham/pynumutil)
 
 ## Overview
 
@@ -43,15 +43,15 @@ Perhaps most usefully the `discretise` function will return a discrete container
 
 Other functionality is currently available to calculate determinants and find roots. When `find_roots` is called the object will either try and determine the roots using polynomial coefficients if available, or use a more general mechanism (TODO) otherwise.
 
-The following illustrates a use case using the `tisutil` package (https://github.com/petersbingham/tisutil), which is an extension of `matfuncutil`:
- 1. Obtain a `dKmat` container (derived from `dMat`) using the file reading package such as `rfortmatreader` (https://github.com/petersbingham/ukrmolmatreader).
+The following illustrates a use case using the [`tisutil` package](https://github.com/petersbingham/tisutil), which is an extension of `matfuncutil`:
+ 1. Obtain a `dKmat` container (derived from `dMat`) using the file reading package such as [`rfortmatreader`](https://github.com/petersbingham/ukrmolmatreader).
  2. Trim this to the required size using the `get_slice_indices` function.
- 3. Pass this to some fitting routine such as `parsmat` (https://github.com/petersbingham/parsmat).
+ 3. Pass this to some fitting routine such as [`parsmat`](https://github.com/petersbingham/parsmat).
  4. All being well it will return a continuous type container.
  5. We can then find the roots by calling `find_roots`.
  6. And\or create plots, convert to other quantities etc using the discrete interfaces on the return from the `discretise` function.
 
-Also, we may not always start a fitting procedure with a discrete data set. For example `twochanradialwell` (https://github.com/petersbingham/twochanradialwell) returns a continuous type container. In this case we replace steps 1 and 2 above with:
+Also, we may not always start a fitting procedure with a discrete data set. For example [`twochanradialwell`]( https://github.com/petersbingham/twochanradialwell) returns a continuous type container. In this case we replace steps 1 and 2 above with:
  1. Obtain a continuous type container using some analytical solver or directly from the `twochanradialwell` (for example).
  2. Create an `dKmat` container of the appropriate range and length using the `discretise` function.
 
