@@ -28,7 +28,7 @@ For example we might have a set of data that we want to fit some function to, th
 
 There are several forms for discrete data, all of which can be found in the `discrete` module. The common functionality is contained in `dBase`, which is an extension, and slight alteration, of the python dict type. Derived from base are `dSca`, `dVec` and `dMat` which provide containers mapping mpmath or numpy floats to either mpmath or numpy floats, vectors and matrices respectively.
 
-As mentioned the discrete containers are like dicts, except the key should always be a float-like type. The `__getitem__` function has been overridden and accepts either ints or float-likes. These are mapped to the actual float-like dict keys as follows:
+As mentioned the discrete containers are like dicts. They map a float-like key (either python or mpmath) to either a float-like, vector-like or matrix-like value. The `__getitem__` function has been overridden and accepts either ints or float-likes. These are mapped to the actual float-like dict keys as follows:
  1. If the provided key is a float (either primitive python or mpmath) then it's directly mapped to the dictionary value in the standard manner.
  2. If an integer is provided as a key then this is used as an index to a sorted list of the dictionary keys. A tuple containing the dictionary key and it's corresponding quantity is returned.
  3. If a slice is provided then this is used to create a new dictionary obtained from applying the slice to a sorted list of the dictionary keys.
