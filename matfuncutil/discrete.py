@@ -152,6 +152,9 @@ class dBase(dict, object):
     def get_chart_title(self):
         return self.chart_title
 
+    def supplement_chart_title(self, desc_str):
+        self.chart_title += " (" + desc_str + ")"
+
     def set_axis_labels(self, x_plotlbl, y_plotlbl):
         self.x_plotlbl = x_plotlbl
         self.y_plotlbl = y_plotlbl
@@ -319,18 +322,23 @@ class dVec(dBase):
         return dSca(units=self.units)
 
 class dMat(dBase):
-    def create_reduced_dim(self, i, is_col=False):
+    def create_reduced_dim(self, i=0, is_col=False, is_diag=False):
         new_item = self._get_reduction_container()
         self._init_new_item(new_item)
-        new_item.set_chart_title(self.chart_title + ", m="+str(i+1))
+        if not is_diag:
+            new_item.set_chart_title(self.chart_title + ", m="+str(i+1))
         for key in self:
             val = self[key] # force fun eval if relevant
-            new_item[key] = nw.get_vector(val,i,is_col)
+            if not is_diag:
+                new_item[key] = nw.get_vector(val,i,is_col)
+            else:
+                new_item[key] = nw.get_diag(val)
         return new_item
 
     def trace(self):
         new_item = dSca(units=self.units)
         self._init_new_item(new_item)
+        new_item.supplement_chart_title("trace")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.trace(val)
@@ -339,6 +347,7 @@ class dMat(dBase):
     def absolute(self):
         new_item = dSca(units=self.units)
         self._init_new_item(new_item)
+        new_item.supplement_chart_title("absolute")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.absolute(val)
@@ -347,9 +356,19 @@ class dMat(dBase):
     def unitary_op(self):
         new_item = dMat(units=self.units)
         self._init_new_item(new_item)
+        new_item.supplement_chart_title("unitary op")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.unitary_op(val)
+        return new_item
+
+    def diagonalise(self):
+        new_item = dMat(units=self.units)
+        self._init_new_item(new_item)
+        new_item.supplement_chart_title("diagonalised")
+        for key in self:
+            val = self[key] # force fun eval if relevant
+            new_item[key] = nw.diagonalise(val)
         return new_item
 
     def is_unitary(self, rtol=1e-05, atol=1e-08):
