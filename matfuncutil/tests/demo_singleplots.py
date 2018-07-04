@@ -20,8 +20,9 @@ d = a.trace()
 d.plot()
 
 import math
-cSin = dum_mats.mfc.cSca(math.sin)
+cSin = dum_mats.mfc.cSca(math.sin, x_units="Ux", y_units="Uy")
 dSin = cSin.discretise(-2*math.pi, 2*math.pi, 200)
+dSin.set_axis_labels("Ax", "Ay")
 dSin.plot()
 
 dSin2 = dSin.create_reduced_length(-math.pi, math.pi, 20)

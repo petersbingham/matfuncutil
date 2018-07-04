@@ -7,13 +7,16 @@ from discrete import *
 import pynumutil as nu
 
 class cBase:
-    def __init__(self, fun_ref, units=None, source_str="", hist_str="", 
-                 chart_title=""):
+    def __init__(self, fun_ref, x_units=None, y_units=None, chart_title="",
+                 x_plotlbl="", y_plotlbl="", source_str=""):
         self.fun_ref = fun_ref
-        self.units = units
-        self.source_str = source_str
-        self.hist_str = hist_str
+        self.x_units = x_units
+        self.y_units = y_units
         self.chart_title = chart_title
+        self.x_plotlbl = x_plotlbl
+        self.y_plotlbl = y_plotlbl
+        self.source_str = source_str
+        self.hist_str = ""
 
     def is_continuous(self):
         return True
@@ -62,9 +65,14 @@ class cBase:
     def set_chart_title(self, chart_title):
         self.chart_title = chart_title
 
+    def set_axis_labels(self, x_plotlbl, y_plotlbl=""):
+        self.x_plotlbl = x_plotlbl
+        self.y_plotlbl = y_plotlbl
+
 class cSca(cBase):
     def _get_discrete_container(self):
-        return dSca(units=self.units)
+        return dSca({}, self.x_units, self.y_units, self.chart_title,
+                    self.x_plotlbl, self.y_plotlbl, self.source_str)
 
     def find_roots(self):
         # TODO add generic root finder (eg pydelves)
@@ -72,11 +80,13 @@ class cSca(cBase):
 
 class cVec(cBase):
     def _get_discrete_container(self):
-        return dVec(units=self.units)
+        return dVec({}, self.x_units, self.y_units, self.chart_title,
+                    self.x_plotlbl, self.y_plotlbl, self.source_str)
 
 class cMat(cBase):
     def _get_discrete_container(self):
-        return dMat(units=self.units)
+        return dMat({}, self.x_units, self.y_units, self.chart_title,
+                    self.x_plotlbl, self.y_plotlbl, self.source_str)
 
     def determinant(self):
         # TODO Return a cSca that will evaluate self.fun_ref and then find the
@@ -84,9 +94,11 @@ class cMat(cBase):
         pass
 
 class cSympyPolySca(cSca):
-    def __init__(self, sym_val, sym_var, units=None, source_str=""):
+    def __init__(self, sym_val, sym_var, x_units=None, y_units=None, 
+                 chart_title="", x_plotlbl="", y_plotlbl="", source_str=""):
         cSca.__init__(self, lambda val: nw.from_sympy(sym_val.subs(sym_var, val)),
-                      units, source_str)
+                      x_units, y_units, chart_title, x_plotlbl, y_plotlbl,
+                      source_str)
         self.sym_val = sym_val
         self.sym_var = sym_var
 
@@ -103,10 +115,12 @@ class cSympyPolySca(cSca):
         return nw.roots_sym(poly)
 
 class cSympyPolyMat(cMat):
-    def __init__(self, sym_mat, sym_var, units=None, source_str=""):
+    def __init__(self, sym_mat, sym_var, x_units=None, y_units=None, 
+                 chart_title="", x_plotlbl="", y_plotlbl="", source_str=""):
         cMat.__init__(self,
                       lambda val: nw.from_sympy_matrix(sym_mat.subs(sym_var, val)),
-                      units, source_str)
+                      x_units, y_units, chart_title, x_plotlbl, y_plotlbl,
+                      source_str)
         self.sym_mat = sym_mat
         self.sym_var = sym_var
 
@@ -119,4 +133,6 @@ class cSympyPolyMat(cMat):
             det = new_mat.det(**kwargs["sym_matrix_det"])
         else:
             det = new_mat.det()
-        return cSympyPolySca(det, self.sym_var, self.units)
+        return cSympyPolySca(det, self.sym_var, self.x_units, self.y_units,
+                             self.chart_title, self.x_plotlbl, self.y_plotlbl,
+                             self.source_str)

@@ -6,15 +6,18 @@ import random
 import pynumwrap as nw
 
 class dBase(dict, object):
-    def __init__(self, d={}, units=None, source_str="", hist_str="",
-                 chart_title="", x_plotlbl="", y_plotlbl=""):
+    def __init__(self, d=None, x_units=None, y_units=None, chart_title="",
+                 x_plotlbl="", y_plotlbl="", source_str=""):
+        if d is None:
+            d = {}
         dict.__init__(self, d)
-        self.units = units
+        self.x_units = x_units
+        self.y_units = y_units
         
         self.chart_title = chart_title
         self.x_plotlbl = x_plotlbl
         self.y_plotlbl = y_plotlbl
-        self.colour_cycle = ['black', 'red', 'green', 'blue']
+        self.colour_cycle = ['black', 'green', 'orange', 'purple']
         self.leg_prefix = ""
         self.use_marker = False
         self.xsize = None
@@ -22,7 +25,7 @@ class dBase(dict, object):
         
         self.sig_figs = 6
         self.source_str = source_str
-        self.hist_str = hist_str
+        self.hist_str = ""
 
     def is_continuous(self):
         return False
@@ -155,7 +158,7 @@ class dBase(dict, object):
     def supplement_chart_title(self, desc_str):
         self.chart_title += " (" + desc_str + ")"
 
-    def set_axis_labels(self, x_plotlbl, y_plotlbl):
+    def set_axis_labels(self, x_plotlbl, y_plotlbl=""):
         self.x_plotlbl = x_plotlbl
         self.y_plotlbl = y_plotlbl
 
@@ -186,19 +189,22 @@ class dBase(dict, object):
         if show:
             p.show()
 
+    def _set_axis_lbl(self, fun, units, plotlbl):
+        if units is not None:
+            if plotlbl == "":
+                fun(units, fontsize=12)
+            else:
+                fun(plotlbl+" ("+units+")", fontsize=12)
+        else:
+            fun(plotlbl, fontsize=12)
+
     def _plot(self, logx=False, logy=False, imag=False):
         self._init_plot(imag)
         ls,ss = self.get_plot_info(logx, logy, imag)
         if ss is not None:
             plt.legend(ls, ss)
-        if self.units is not None:
-            if self.x_plotlbl == "":
-                plt.xlabel(self.units, fontsize=12)
-            else:
-                plt.xlabel(self.x_plotlbl+" ("+self.units+")", fontsize=12)
-        else:
-            plt.xlabel(self.x_plotlbl, fontsize=12)
-        plt.ylabel(self.y_plotlbl, fontsize=12)
+        self._set_axis_lbl(plt.xlabel, self.x_units, self.x_plotlbl)
+        self._set_axis_lbl(plt.ylabel, self.y_units, self.y_plotlbl)
         return plt
 
     def get_plot_info(self, logx=False, logy=False, imag=False):
@@ -252,15 +258,19 @@ class dBase(dict, object):
         return i
 
     def _init_new_item(self, item):
-        item.set_chart_parameters(self.colour_cycle, self.leg_prefix, self.use_marker)
+        item.set_chart_parameters(self.colour_cycle, self.leg_prefix,
+                                  self.use_marker)
         item.set_print_parameters(self.sig_figs)
 
-    def _create_new_item(self, units=None, new_type=None):
-        if units is None:
-            units = self.units
+    def _create_new_item(self, x_units=None, y_units=None, new_type=None):
+        if x_units is None:
+            x_units = self.x_units
+        if y_units is None:
+            y_units = self.y_units
         if new_type is None:
             new_type = type(self)
-        new_item = new_type(units=units, source_str=self.source_str)
+        new_item = new_type({}, x_units, y_units, self.chart_title,
+                            self.x_plotlbl, self.y_plotlbl, self.source_str)
         return new_item
 
 
@@ -319,7 +329,8 @@ class dVec(dBase):
         return nw.shape(self[key])[0]
 
     def _get_reduction_container(self):
-        return dSca(units=self.units)
+        return dSca({}, self.x_units, self.y_units, self.chart_title,
+                    self.x_plotlbl, self.y_plotlbl, self.source_str)
 
 class dMat(dBase):
     def create_reduced_dim(self, i=0, is_col=False, is_diag=False):
@@ -336,7 +347,7 @@ class dMat(dBase):
         return new_item
 
     def trace(self):
-        new_item = dSca(units=self.units)
+        new_item = dSca(x_units=self.x_units, y_units=self.y_units)
         self._init_new_item(new_item)
         new_item.supplement_chart_title("trace")
         for key in self:
@@ -345,7 +356,7 @@ class dMat(dBase):
         return new_item
 
     def absolute(self):
-        new_item = dSca(units=self.units)
+        new_item = dSca(x_units=self.x_units, y_units=self.y_units)
         self._init_new_item(new_item)
         new_item.supplement_chart_title("absolute")
         for key in self:
@@ -354,7 +365,7 @@ class dMat(dBase):
         return new_item
 
     def unitary_op(self):
-        new_item = dMat(units=self.units)
+        new_item = dMat(x_units=self.x_units, y_units=self.y_units)
         self._init_new_item(new_item)
         new_item.supplement_chart_title("unitary op")
         for key in self:
@@ -363,7 +374,7 @@ class dMat(dBase):
         return new_item
 
     def diagonalise(self):
-        new_item = dMat(units=self.units)
+        new_item = dMat(x_units=self.x_units, y_units=self.y_units)
         self._init_new_item(new_item)
         new_item.supplement_chart_title("diagonalised")
         for key in self:
@@ -408,4 +419,4 @@ class dMat(dBase):
         return nw.shape(self[key])[0]
 
     def _get_reduction_container(self):
-        return dVec(units=self.units)
+        return dVec(x_units=self.x_units, y_units=self.y_units)
