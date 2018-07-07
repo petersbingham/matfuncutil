@@ -17,7 +17,7 @@ class dBase(dict, object):
         self.chart_title = chart_title
         self.x_plotlbl = x_plotlbl
         self.y_plotlbl = y_plotlbl
-        self.colour_cycle = ['black', 'green', 'orange', 'purple']
+        self.colour_cycle = ['black', 'purple', 'green', 'orange']
         self.leg_prefix = ""
         self.use_marker = False
         self.xsize = None

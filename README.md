@@ -37,7 +37,7 @@ In addition, the helper function `get_slice_indices(self, startIndex, endIndex, 
 
 ### Continuous Containers
 
-The continuous module provides containers for the continuous representation. Similar to the discrete case there is a `cBase` from which is derived `cSca`, `cVec` and `cMat` containers. Each of these require a function reference for construction. In addition the  `cSympyPolySca` and `cSympyPolyMat` specialisations are available to handle containers of symbolic scalars and matrices.
+The continuous module provides containers for the continuous representation. Similar to the discrete case there is a `cBase` from which is derived `cSca`, `cVec` and `cMat` containers. Each of these require a function reference for construction. In addition the  `cScaSympypoly` and `cMatSympypoly` specialisations are available to handle containers of symbolic scalars and matrices.
 
 Perhaps most usefully the `discretise` function will return a discrete container type providing all functionality described in the previous section. The discretised container will be lazily evaluated for efficiency; on the first call for a particular value it will be computed using the function reference and then cached into memory for any subsequent calls.
 

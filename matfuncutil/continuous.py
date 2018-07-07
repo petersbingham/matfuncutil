@@ -93,7 +93,7 @@ class cMat(cBase):
         # determiant automatically
         pass
 
-class cSympyPolySca(cSca):
+class cScaSympypoly(cSca):
     def __init__(self, sym_val, sym_var, x_units=None, y_units=None, 
                  chart_title="", x_plotlbl="", y_plotlbl="", source_str=""):
         cSca.__init__(self, lambda val: nw.from_sympy(sym_val.subs(sym_var, val)),
@@ -114,7 +114,7 @@ class cSympyPolySca(cSca):
             return nw.roots_sym(poly, **kwargs_copy["nw_roots_sym"])
         return nw.roots_sym(poly)
 
-class cSympyPolyMat(cMat):
+class cMatSympypoly(cMat):
     def __init__(self, sym_mat, sym_var, x_units=None, y_units=None, 
                  chart_title="", x_plotlbl="", y_plotlbl="", source_str=""):
         cMat.__init__(self,
@@ -133,6 +133,6 @@ class cSympyPolyMat(cMat):
             det = new_mat.det(**kwargs["sym_matrix_det"])
         else:
             det = new_mat.det()
-        return cSympyPolySca(det, self.sym_var, self.x_units, self.y_units,
+        return cScaSympypoly(det, self.sym_var, self.x_units, self.y_units,
                              self.chart_title, self.x_plotlbl, self.y_plotlbl,
                              self.source_str)
