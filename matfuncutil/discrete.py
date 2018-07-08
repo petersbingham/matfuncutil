@@ -333,15 +333,15 @@ class dVec(dBase):
                     self.x_plotlbl, self.y_plotlbl, self.source_str)
 
 class dMat(dBase):
-    def create_reduced_dim(self, i=0, is_col=False, is_diag=False):
+    def create_reduced_dim(self, i=0, col=False, diag=False):
         new_item = self._get_reduction_container()
         self._init_new_item(new_item)
-        if not is_diag:
+        if not diag:
             new_item.set_chart_title(self.chart_title + ", m="+str(i+1))
         for key in self:
             val = self[key] # force fun eval if relevant
-            if not is_diag:
-                new_item[key] = nw.get_vector(val,i,is_col)
+            if not diag:
+                new_item[key] = nw.get_vector(val,i,col)
             else:
                 new_item[key] = nw.get_diag(val)
         return new_item
