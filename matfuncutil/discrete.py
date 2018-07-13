@@ -382,6 +382,15 @@ class dMat(dBase):
             new_item[key] = nw.diagonalise(val)
         return new_item
 
+    def eigenvalues(self):
+        new_item = dVec(x_units=self.x_units, y_units=self.y_units)
+        self._init_new_item(new_item)
+        new_item.supplement_chart_title("eigenvalues")
+        for key in self:
+            val = self[key] # force fun eval if relevant
+            new_item[key] = nw.eigenvalues(val)
+        return new_item
+
     def is_unitary(self, rtol=1e-05, atol=1e-08):
         for val in self.values():
             if not nw.is_unitary(val, rtol, atol):
