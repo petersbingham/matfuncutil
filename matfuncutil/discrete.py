@@ -346,8 +346,16 @@ class dMat(dBase):
                 new_item[key] = nw.get_diag(val)
         return new_item
 
+    # These can be overridden in any derived classes.
+    def _get_dSca(self):
+        return dSca(x_units=self.x_units, source_str=self.source_str)
+    def _get_dVec(self):
+        return dVec(x_units=self.x_units, source_str=self.source_str)
+    def _get_dMat(self):
+        return dMat(x_units=self.x_units, source_str=self.source_str)
+
     def trace(self):
-        new_item = dSca(x_units=self.x_units, y_units=self.y_units)
+        new_item = self._get_dSca()
         self._init_new_item(new_item)
         new_item.supplement_chart_title("trace")
         for key in self:
@@ -356,7 +364,7 @@ class dMat(dBase):
         return new_item
 
     def absolute(self):
-        new_item = dSca(x_units=self.x_units, y_units=self.y_units)
+        new_item = self._get_dSca()
         self._init_new_item(new_item)
         new_item.supplement_chart_title("absolute")
         for key in self:
@@ -365,7 +373,7 @@ class dMat(dBase):
         return new_item
 
     def unitary_op(self):
-        new_item = dMat(x_units=self.x_units, y_units=self.y_units)
+        new_item = self._get_dMat()
         self._init_new_item(new_item)
         new_item.supplement_chart_title("unitary op")
         for key in self:
@@ -374,7 +382,7 @@ class dMat(dBase):
         return new_item
 
     def diagonalise(self):
-        new_item = dMat(x_units=self.x_units, y_units=self.y_units)
+        new_item = self._get_dMat()
         self._init_new_item(new_item)
         new_item.supplement_chart_title("diagonalised")
         for key in self:
@@ -383,7 +391,7 @@ class dMat(dBase):
         return new_item
 
     def eigenvalues(self):
-        new_item = dVec(x_units=self.x_units, y_units=self.y_units)
+        new_item = self._get_dVec()
         self._init_new_item(new_item)
         new_item.supplement_chart_title("eigenvalues")
         for key in self:
