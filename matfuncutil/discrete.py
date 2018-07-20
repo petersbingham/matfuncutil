@@ -273,8 +273,26 @@ class dBase(dict, object):
                             self.x_plotlbl, self.y_plotlbl, self.source_str)
         return new_item
 
+    # These can be overridden in any derived classes.
+    def _get_dSca(self):
+        return dSca(x_units=self.x_units, source_str=self.source_str)
+    def _get_dVec(self):
+        return dVec(x_units=self.x_units, source_str=self.source_str)
+    def _get_dMat(self):
+        return dMat(x_units=self.x_units, source_str=self.source_str)
+
 
 class dSca(dBase):
+    def gradient(self):
+        keys = self.sorted_keys()
+        vals = self.sorted_values()
+        grad = nw.gradient(vals, keys)
+        new_item = self._get_dSca()
+        new_item.supplement_chart_title("gradient")
+        for x in zip(keys,grad):
+            new_item[x[0]] = x[1]
+        return new_item
+
     def _get_plot_nums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
@@ -289,7 +307,6 @@ class dSca(dBase):
     def _get_plot_legends(self):
         return None
 
-
 class dVec(dBase):
     def create_reduced_dim(self, j):
         new_item = self._get_reduction_container()
@@ -298,6 +315,22 @@ class dVec(dBase):
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = val[j]
+        return new_item
+
+    def gradient(self):
+        keys = self.sorted_keys()
+        size = self._get_size()
+
+        dSca_diffs = []
+        for j in range(size):
+            dSca_diffs.append(self.create_reduced_dim(j).gradient())
+
+        new_item = self._get_dVec()
+        new_item.supplement_chart_title("gradient")
+        for key in keys:
+            new_item[key] = nw.vector([0.+0.j]*size)
+            for j in range(size):
+                new_item[key][j] = dSca_diffs[j][key]
         return new_item
 
     def _get_plot_nums(self, imag):
@@ -346,14 +379,6 @@ class dMat(dBase):
                 new_item[key] = nw.get_diag(val)
         return new_item
 
-    # These can be overridden in any derived classes.
-    def _get_dSca(self):
-        return dSca(x_units=self.x_units, source_str=self.source_str)
-    def _get_dVec(self):
-        return dVec(x_units=self.x_units, source_str=self.source_str)
-    def _get_dMat(self):
-        return dMat(x_units=self.x_units, source_str=self.source_str)
-
     def trace(self):
         new_item = self._get_dSca()
         self._init_new_item(new_item)
@@ -399,6 +424,23 @@ class dMat(dBase):
             new_item[key] = nw.eigenvalues(val)
         return new_item
 
+    def gradient(self):
+        keys = self.sorted_keys()
+        size = self._get_size()
+
+        dVec_diffs = []
+        for i in range(size):
+            dVec_diffs.append(self.create_reduced_dim(i).gradient())
+
+        new_item = self._get_dMat()
+        new_item.supplement_chart_title("gradient")
+        for key in keys:
+            new_item[key] = nw.matrix([[0.+0.j]*size]*size)
+            for i in range(size):
+                for j in range(size):
+                    new_item[key][i,j] = dVec_diffs[i][key][j]
+        return new_item
+
     def is_unitary(self, rtol=1e-05, atol=1e-08):
         for val in self.values():
             if not nw.is_unitary(val, rtol, atol):
@@ -413,12 +455,12 @@ class dMat(dBase):
             for j in range(size):
                 xs = np.ndarray((len(self),), dtype=float)
                 ys = np.ndarray((len(self),), dtype=float)
-                for key,ene in enumerate(self.sorted_keys()):
-                    xs[key] = self[key][0].real
+                for k in range(len(self)):
+                    xs[k] = self[k][0].real
                     if not imag:
-                        ys[key] = self[key][1][i,j].real
+                        ys[k] = self[k][1][i,j].real
                     else:
-                        ys[key] = self[key][1][i,j].imag
+                        ys[k] = self[k][1][i,j].imag
                 xss.append(xs)
                 yss.append(ys)
         return xss, yss
@@ -431,6 +473,7 @@ class dMat(dBase):
                 leg_strs.append(self.leg_prefix + ": "+str(i+1)+","+str(j+1))
         return leg_strs
 
+    # Currently only supports square matrices
     def _get_size(self):
         key = random.choice(self.keys())
         return nw.shape(self[key])[0]
