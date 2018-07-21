@@ -156,7 +156,7 @@ class dBase(dict, object):
         return self.chart_title
 
     def supplement_chart_title(self, desc_str):
-        self.chart_title += " (" + desc_str + ")"
+        self.chart_title += desc_str
 
     def set_axis_labels(self, x_plotlbl, y_plotlbl=""):
         self.x_plotlbl = x_plotlbl
@@ -263,8 +263,8 @@ class dBase(dict, object):
                                   self.use_marker)
         item.set_print_parameters(self.sig_figs)
 
-    def _supplement_chart_title(self, new_item, title_str):
-        new_item.set_chart_title(self.chart_title + " " + title_str)
+    def _set_chart_title_for_new(self, new_item, add_title_str):
+        new_item.set_chart_title(self.chart_title + add_title_str)
 
     def _create_new_item(self, x_units=None, y_units=None, new_type=None):
         if x_units is None:
@@ -292,7 +292,7 @@ class dSca(dBase):
         vals = self.sorted_values()
         grad = nw.gradient(vals, keys)
         new_item = self._get_dSca()
-        new_item.supplement_chart_title("gradient")
+        self._set_chart_title_for_new(new_item, " gradient")
         for x in zip(keys,grad):
             new_item[x[0]] = x[1]
         return new_item
@@ -315,7 +315,7 @@ class dVec(dBase):
     def create_reduced_dim(self, j):
         new_item = self._get_reduction_container()
         self._init_new_item(new_item)
-        new_item.set_chart_title(self.chart_title + ", n="+str(j+1))
+        self._set_chart_title_for_new(new_item, " n="+str(j+1))
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = val[j]
@@ -330,7 +330,7 @@ class dVec(dBase):
             dSca_diffs.append(self.create_reduced_dim(j).gradient())
 
         new_item = self._get_dVec()
-        new_item.supplement_chart_title("gradient")
+        self._set_chart_title_for_new(new_item, " gradient")
         for key in keys:
             new_item[key] = nw.vector([0.+0.j]*size)
             for j in range(size):
@@ -374,7 +374,7 @@ class dMat(dBase):
         new_item = self._get_reduction_container()
         self._init_new_item(new_item)
         if not diag:
-            self._supplement_chart_title(new_item, ", m="+str(i+1))
+            self._set_chart_title_for_new(new_item, " m="+str(i+1))
         for key in self:
             val = self[key] # force fun eval if relevant
             if not diag:
@@ -386,7 +386,7 @@ class dMat(dBase):
     def trace(self):
         new_item = self._get_dSca()
         self._init_new_item(new_item)
-        self._supplement_chart_title(new_item, "(trace)")
+        self._set_chart_title_for_new(new_item, " trace")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.trace(val)
@@ -395,7 +395,7 @@ class dMat(dBase):
     def absolute(self):
         new_item = self._get_dSca()
         self._init_new_item(new_item)
-        self._supplement_chart_title(new_item, "(absolute)")
+        self._set_chart_title_for_new(new_item, " absolute")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.absolute(val)
@@ -404,7 +404,7 @@ class dMat(dBase):
     def unitary_op(self):
         new_item = self._get_dMat()
         self._init_new_item(new_item)
-        self._supplement_chart_title(new_item, "(unitary op)")
+        self._set_chart_title_for_new(new_item, " unitary op")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.unitary_op(val)
@@ -413,7 +413,7 @@ class dMat(dBase):
     def diagonalise(self):
         new_item = self._get_dMat()
         self._init_new_item(new_item)
-        self._supplement_chart_title(new_item, "(diagonalised)")
+        self._set_chart_title_for_new(new_item, " diagonalised")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.diagonalise(val)
@@ -422,7 +422,7 @@ class dMat(dBase):
     def eigenvalues(self):
         new_item = self._get_dVec()
         self._init_new_item(new_item)
-        self._supplement_chart_title(new_item, "(eigenvalues)")
+        self._set_chart_title_for_new(new_item, " eigenvalues")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.eigenvalues(val)
@@ -437,7 +437,7 @@ class dMat(dBase):
             dVec_diffs.append(self.create_reduced_dim(i).gradient())
 
         new_item = self._get_dMat()
-        self._supplement_chart_title(new_item, "(gradient)")
+        self._set_chart_title_for_new(new_item, " gradient")
         for key in keys:
             new_item[key] = nw.matrix([[0.+0.j]*size]*size)
             for i in range(size):

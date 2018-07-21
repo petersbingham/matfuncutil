@@ -65,6 +65,9 @@ class cBase:
     def set_chart_title(self, chart_title):
         self.chart_title = chart_title
 
+    def supplement_chart_title(self, desc_str):
+        self.chart_title += desc_str
+
     def set_axis_labels(self, x_plotlbl, y_plotlbl=""):
         self.x_plotlbl = x_plotlbl
         self.y_plotlbl = y_plotlbl
