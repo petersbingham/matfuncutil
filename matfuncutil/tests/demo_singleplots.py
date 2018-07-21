@@ -6,10 +6,11 @@ sys.path.insert(0,basedir+'/../..')
 import dum_mats
 
 a = dum_mats.row_offset_col_gain_zeroimag()
+a.set_chart_title("Test title a")
 a.plot()
 
 b = a.create_reduced_dim(0)
-b.set_chart_title("Test title")
+b.set_chart_title("Test title b")
 b.plot(logx=True, logy=True)
 
 c = b.create_reduced_dim(1)

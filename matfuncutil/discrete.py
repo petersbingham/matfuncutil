@@ -258,9 +258,13 @@ class dBase(dict, object):
         return i
 
     def _init_new_item(self, item):
+        # Nothing specific to the type of data here eg chart_title
         item.set_chart_parameters(self.colour_cycle, self.leg_prefix,
                                   self.use_marker)
         item.set_print_parameters(self.sig_figs)
+
+    def _supplement_chart_title(self, new_item, title_str):
+        new_item.set_chart_title(self.chart_title + " " + title_str)
 
     def _create_new_item(self, x_units=None, y_units=None, new_type=None):
         if x_units is None:
@@ -370,7 +374,7 @@ class dMat(dBase):
         new_item = self._get_reduction_container()
         self._init_new_item(new_item)
         if not diag:
-            new_item.set_chart_title(self.chart_title + ", m="+str(i+1))
+            self._supplement_chart_title(new_item, ", m="+str(i+1))
         for key in self:
             val = self[key] # force fun eval if relevant
             if not diag:
@@ -382,7 +386,7 @@ class dMat(dBase):
     def trace(self):
         new_item = self._get_dSca()
         self._init_new_item(new_item)
-        new_item.supplement_chart_title("trace")
+        self._supplement_chart_title(new_item, "(trace)")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.trace(val)
@@ -391,7 +395,7 @@ class dMat(dBase):
     def absolute(self):
         new_item = self._get_dSca()
         self._init_new_item(new_item)
-        new_item.supplement_chart_title("absolute")
+        self._supplement_chart_title(new_item, "(absolute)")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.absolute(val)
@@ -400,7 +404,7 @@ class dMat(dBase):
     def unitary_op(self):
         new_item = self._get_dMat()
         self._init_new_item(new_item)
-        new_item.supplement_chart_title("unitary op")
+        self._supplement_chart_title(new_item, "(unitary op)")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.unitary_op(val)
@@ -409,7 +413,7 @@ class dMat(dBase):
     def diagonalise(self):
         new_item = self._get_dMat()
         self._init_new_item(new_item)
-        new_item.supplement_chart_title("diagonalised")
+        self._supplement_chart_title(new_item, "(diagonalised)")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.diagonalise(val)
@@ -418,7 +422,7 @@ class dMat(dBase):
     def eigenvalues(self):
         new_item = self._get_dVec()
         self._init_new_item(new_item)
-        new_item.supplement_chart_title("eigenvalues")
+        self._supplement_chart_title(new_item, "(eigenvalues)")
         for key in self:
             val = self[key] # force fun eval if relevant
             new_item[key] = nw.eigenvalues(val)
@@ -433,7 +437,7 @@ class dMat(dBase):
             dVec_diffs.append(self.create_reduced_dim(i).gradient())
 
         new_item = self._get_dMat()
-        new_item.supplement_chart_title("gradient")
+        self._supplement_chart_title(new_item, "(gradient)")
         for key in keys:
             new_item[key] = nw.matrix([[0.+0.j]*size]*size)
             for i in range(size):
