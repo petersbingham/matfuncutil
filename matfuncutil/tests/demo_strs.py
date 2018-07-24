@@ -20,3 +20,11 @@ print str(d)
 raw_input("Any key to continue.")
 d = dum_mats.row_offset_col_gain_posNegImag()
 print str(d)
+
+raw_input("Any key to continue.")
+d = d.create_reduced_dim(0)
+print str(d)
+
+raw_input("Any key to continue.")
+d = d.create_reduced_dim(0)
+print str(d)

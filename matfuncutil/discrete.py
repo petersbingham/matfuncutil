@@ -90,6 +90,9 @@ class dBase(dict, object):
         if isinstance(end, float):
             end = self._get_nearest_index(end)
 
+        if not num_points:
+            num_points = end-start+1
+
         if end-start+1 < num_points:
             raise IndexError
 
@@ -201,7 +204,7 @@ class dBase(dict, object):
     def _plot(self, logx=False, logy=False, imag=False):
         self._init_plot(imag)
         ls,ss = self.get_plot_info(logx, logy, imag)
-        if ss is not None:
+        if ss is not None and len(self.colour_cycle)>1:
             plt.legend(ls, ss)
         self._set_axis_lbl(plt.xlabel, self.x_units, self.x_plotlbl)
         self._set_axis_lbl(plt.ylabel, self.y_units, self.y_plotlbl)
