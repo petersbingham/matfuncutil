@@ -42,6 +42,10 @@ class dBase(dict, object):
             vals.append(self[key])
         return vals
 
+    def valsize(self):
+        valshape = self.valshape()
+        return valshape[0] * valshape[1]
+
     def sorted_values(self):
         sorted_vals = []
         for key in self.sorted_keys():
@@ -300,6 +304,9 @@ class dSca(dBase):
             new_item[x[0]] = x[1]
         return new_item
 
+    def valshape(self):
+        return (1,1)
+
     def _get_plot_nums(self, imag):
         xs = np.ndarray((len(self),), dtype=float)
         ys = np.ndarray((len(self),), dtype=float)
@@ -326,25 +333,25 @@ class dVec(dBase):
 
     def gradient(self):
         keys = self.sorted_keys()
-        size = self._get_size()
+        valsize = self.valsize()
 
         dSca_diffs = []
-        for j in range(size):
+        for j in range(valsize):
             dSca_diffs.append(self.create_reduced_dim(j).gradient())
 
         new_item = self._get_dVec()
         self._set_chart_title_for_new(new_item, " gradient")
         for key in keys:
-            new_item[key] = nw.vector([0.+0.j]*size)
-            for j in range(size):
+            new_item[key] = nw.vector([0.+0.j]*valsize)
+            for j in range(valsize):
                 new_item[key][j] = dSca_diffs[j][key]
         return new_item
 
     def _get_plot_nums(self, imag):
         xss = []
         yss = []
-        size = self._get_size()
-        for j in range(size):
+        valsize = self.valsize()
+        for j in range(valsize):
             xs = np.ndarray((len(self),), dtype=float)
             ys = np.ndarray((len(self),), dtype=float)
             for key,ene in enumerate(self.sorted_keys()):
@@ -359,14 +366,13 @@ class dVec(dBase):
 
     def _get_plot_legends(self):
         leg_strs = []
-        size = self._get_size()
-        for j in range(size):
+        valsize = self.valsize()
+        for j in range(valsize):
             leg_strs.append(self.leg_prefix + ": "+str(j+1))
         return leg_strs
 
-    def _get_size(self):
-        key = random.choice(self.keys())
-        return nw.shape(self[key])[0]
+    def valshape(self):
+        return nw.shape(self[self.keys()[0]])
 
     def _get_reduction_container(self):
         return dSca({}, self.x_units, self.y_units, self.chart_title,
@@ -433,18 +439,18 @@ class dMat(dBase):
 
     def gradient(self):
         keys = self.sorted_keys()
-        size = self._get_size()
+        valshape = self.valshape()
 
         dVec_diffs = []
-        for i in range(size):
+        for i in range(valshape[0]):
             dVec_diffs.append(self.create_reduced_dim(i).gradient())
 
         new_item = self._get_dMat()
         self._set_chart_title_for_new(new_item, " gradient")
         for key in keys:
-            new_item[key] = nw.matrix([[0.+0.j]*size]*size)
-            for i in range(size):
-                for j in range(size):
+            new_item[key] = nw.matrix([[0.+0.j]*valshape[1]]*valshape[0])
+            for i in range(valshape[0]):
+                for j in range(valshape[1]):
                     new_item[key][i,j] = dVec_diffs[i][key][j]
         return new_item
 
@@ -457,9 +463,9 @@ class dMat(dBase):
     def _get_plot_nums(self, imag):
         xss = []
         yss = []
-        size = self._get_size()
-        for i in range(size):
-            for j in range(size):
+        valshape = self.valshape()
+        for i in range(valshape[0]):
+            for j in range(valshape[1]):
                 xs = np.ndarray((len(self),), dtype=float)
                 ys = np.ndarray((len(self),), dtype=float)
                 for k in range(len(self)):
@@ -474,16 +480,14 @@ class dMat(dBase):
 
     def _get_plot_legends(self):
         leg_strs = []
-        size = self._get_size()
-        for i in range(size):
-            for j in range(size):
+        valshape = self.valshape()
+        for i in range(valshape[0]):
+            for j in range(valshape[1]):
                 leg_strs.append(self.leg_prefix + ": "+str(i+1)+","+str(j+1))
         return leg_strs
 
-    # Currently only supports square matrices
-    def _get_size(self):
-        key = random.choice(self.keys())
-        return nw.shape(self[key])[0]
+    def valshape(self):
+        return nw.shape(self[self.keys()[0]])
 
     def _get_reduction_container(self):
         return dVec(x_units=self.x_units, y_units=self.y_units)
