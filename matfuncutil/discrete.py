@@ -1,9 +1,27 @@
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from cycler import cycler
-import random
+import os
 
 import pynumwrap as nw
+
+def set_plot_paths(fig, save_path, add_axis_lmts):
+    path, name = os.path.split(save_path)
+    name, ext = os.path.splitext(name)
+    mpl.rcParams["savefig.directory"] = path
+    def get_name(name):
+        s = lambda val : nw.num_str_real(val, sig_digits=6,
+                                         min_fixed=-4,
+                                         max_fixed=4,
+                                         strip_zeros=True)
+        if add_axis_lmts:
+            name = name + "_" + s(plt.xlim()[0])
+            name += "_" + s(plt.xlim()[1])
+            name += "_" + s(plt.ylim()[0])
+            name += "_" + s(plt.ylim()[1])
+        return name
+    fig.canvas.get_default_filename = lambda : get_name(name) + ext
 
 class dBase(dict, object):
     def __init__(self, d=None, x_units=None, y_units=None, chart_title="",
@@ -188,13 +206,15 @@ class dBase(dict, object):
     def _get_key_val_check_str(self, keys, i):
         return str(keys[i]) + ":\n" + str(self[keys[i]])
 
-    def plot(self, logx=False, logy=False, imag=False, show=True, 
-             file_name=None):
-        p = self._plot(logx, logy, imag)
-        if file_name is not None:
-            p.savefig(file_name, bbox_inches='tight')
+    def plot(self, logx=False, logy=False, imag=False, show=True,
+             save_path=None, add_axis_lmts=False):
+        fig,plt = self._plot(logx, logy, imag)
+        if save_path is not None:
+            plt.savefig(save_path, bbox_inches='tight')
         if show:
-            p.show()
+            if save_path is not None:
+                set_plot_paths(fig, save_path, add_axis_lmts)
+            plt.show()
 
     def _set_axis_lbl(self, fun, units, plotlbl):
         if units is not None:
@@ -206,13 +226,13 @@ class dBase(dict, object):
             fun(plotlbl, fontsize=12)
 
     def _plot(self, logx=False, logy=False, imag=False):
-        self._init_plot(imag)
+        fig = self._init_plot(imag)
         ls,ss = self.get_plot_info(logx, logy, imag)
         if ss is not None and len(self.colour_cycle)>1:
             plt.legend(ls, ss)
         self._set_axis_lbl(plt.xlabel, self.x_units, self.x_plotlbl)
         self._set_axis_lbl(plt.ylabel, self.y_units, self.y_plotlbl)
-        return plt
+        return fig, plt
 
     def get_plot_info(self, logx=False, logy=False, imag=False):
         ls,ss = self._get_plot_info(logx, logy, imag)
@@ -227,6 +247,7 @@ class dBase(dict, object):
         if self.xsize is not None and self.ysize is not None:
             fig.set_size_inches(self.xsize, self.ysize, forward=True)
         plt.gca().set_prop_cycle(cycler('color', self.colour_cycle))
+        return fig
 
     def _get_plot_info(self, logx, logy, imag):
         xss, yss = self._get_plot_nums(imag)
