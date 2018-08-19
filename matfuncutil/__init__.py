@@ -1,4 +1,5 @@
 from continuous import *
+from matfuncutil.release import __version__
 
 def use_python_types():
     nw.use_python_types()

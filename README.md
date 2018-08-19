@@ -99,7 +99,7 @@ import matfuncutil as mfu
 import pynumwrap as nw
 
 # Dummy set of matrices:
-dmat = mfu.dMat({float(i):nw.matrix([[float(1.*i+1.),float(2.*i+1.)],[float(3.*i+1.),float(4.*i+1.)]]) for i in range(10,20)}, units="Test")
+dmat = mfu.dMat({float(i):nw.matrix([[float(1.*i+1.),float(2.*i+1.)],[float(3.*i+1.),float(4.*i+1.)]]) for i in range(10,20)}, x_units="Test")
 dmat.set_chart_title("Example Chart")
 
 dmat.plot()                           # Plot all elements

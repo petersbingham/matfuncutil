@@ -35,7 +35,7 @@ class cBase:
         dcont.hist_str = self.hist_str + hStr
         sz = (end_val-start_val) / (num_points-1)
         for i in range(num_points):
-            val = start_val +  sz*i
+            val = start_val + sz*i
             dcont[val] = self.fun_ref
         return dcont
 
