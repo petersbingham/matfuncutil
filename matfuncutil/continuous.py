@@ -1,8 +1,5 @@
 import copy
-try:
-    import sympy as sym
-except:
-    pass
+import sympy as sym
 from discrete import *
 import pynumutil as nu
 
