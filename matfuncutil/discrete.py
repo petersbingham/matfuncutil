@@ -40,6 +40,9 @@ class dBase(dict, object):
         self.use_marker = False
         self.xsize = None
         self.ysize = None
+        self.dashes = None
+        self.cycle_dashes = False
+        self.dpi = 300
         
         self.sig_figs = 6
         self.source_str = source_str
@@ -188,7 +191,8 @@ class dBase(dict, object):
         self.y_plotlbl = y_plotlbl
 
     def set_chart_parameters(self, colour_cycle=None, leg_prefix=None,
-                             use_marker=None, xsize=None, ysize=None):
+                             use_marker=None, xsize=None, ysize=None,
+                             dashes=None, cycle_dashes=False, dpi=300):
         if colour_cycle is not None:
             self.colour_cycle = colour_cycle
         if leg_prefix is not None:
@@ -199,6 +203,10 @@ class dBase(dict, object):
             self.xsize = xsize
         if ysize is not None:
             self.ysize = ysize
+        if dashes is not None:
+            self.dashes = dashes
+        self.cycle_dashes = cycle_dashes
+        self.dpi = dpi
 
     def set_print_parameters(self, sig_figs):
         self.sig_figs = sig_figs
@@ -210,7 +218,7 @@ class dBase(dict, object):
              save_path=None, add_axis_lmts=False):
         fig,plt = self._plot(logx, logy, imag)
         if save_path is not None:
-            plt.savefig(save_path, bbox_inches='tight')
+            plt.savefig(save_path, bbox_inches='tight', dpi=self.dpi)
         if show:
             if save_path is not None:
                 set_plot_paths(fig, save_path, add_axis_lmts)
@@ -228,6 +236,15 @@ class dBase(dict, object):
     def _plot(self, logx=False, logy=False, imag=False):
         fig = self._init_plot(imag)
         ls,ss = self.get_plot_info(logx, logy, imag)
+        if self.cycle_dashes:
+            # At least as many dashes for number of lines
+            self.dashes = self.dashes * len(ls)
+        if self.dashes is not None:
+            for i in range(len(self.dashes)):
+                if i >= len(ls):
+                    break
+                if self.dashes[i] is not None:
+                    ls[i].set_dashes(self.dashes[i])
         if ss is not None and len(self.colour_cycle)>1:
             plt.legend(ls, ss)
         self._set_axis_lbl(plt.xlabel, self.x_units, self.x_plotlbl)
@@ -240,10 +257,11 @@ class dBase(dict, object):
 
     def _init_plot(self, imag):
         fig = plt.figure(facecolor="white")
-        if not imag:
-            fig.suptitle(self.chart_title)
-        else:
-            fig.suptitle(self.chart_title + " imag")
+        if self.chart_title is not None:
+            if not imag:
+                fig.suptitle(self.chart_title)
+            else:
+                fig.suptitle(self.chart_title + " imag")
         if self.xsize is not None and self.ysize is not None:
             fig.set_size_inches(self.xsize, self.ysize, forward=True)
         plt.gca().set_prop_cycle(cycler('color', self.colour_cycle))
